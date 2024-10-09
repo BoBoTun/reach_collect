@@ -45,6 +45,40 @@ class _EditEPICState extends State<EditEPI> {
   String? _selectedKey;
   String? _selectedItem;
 
+  String bcg_date = '';
+
+  String opv_date1 = '';
+  String penta_date1 = '';
+  String mmr_date1 = '';
+  String je_date1 = '';
+
+  String opv_date2 = '';
+  String penta_date2 = '';
+  String mmr_date2 = '';
+  String je_date2 = '';
+
+  String opv_date3 = '';
+  String penta_date3 = '';
+  String mmr_date3 = '';
+  String je_date3 = '';
+
+  bool _isCheckedBCG = false;
+
+  bool _isCheckedOPV1 = false;
+  bool _isCheckedOPV2 = false;
+  bool _isCheckedOPV3 = false;
+
+  bool _isCheckedPenta1 = false;
+  bool _isCheckedPenta2 = false;
+  bool _isCheckedPenta3 = false;
+
+  bool _isCheckedMMR1 = false;
+  bool _isCheckedMMR2 = false;
+  bool _isCheckedMMR3 = false;
+
+  bool _isCheckedJE1 = false;
+  bool _isCheckedJE2 = false;
+  bool _isCheckedJE3 = false;
 
   final TextEditingController orgController = TextEditingController();
   final TextEditingController townshipLocalController = TextEditingController();
@@ -87,6 +121,50 @@ class _EditEPICState extends State<EditEPI> {
     _selectedKey = widget.reachCollectVo.stateName ?? '';
     _selectedItem = widget.reachCollectVo.townshipName ?? '';
 
+    bcg_date = widget.reachCollectVo.bcg ?? "${todayDate.toLocal()}".split(' ')[0];
+
+    String opv_date = widget.reachCollectVo.opv ?? '';
+    String penta_date = widget.reachCollectVo.penta ?? '';
+    String mmr_date = widget.reachCollectVo.mmr ?? '';
+    String je_date = widget.reachCollectVo.je ?? '';
+
+    List opvList =  opv_date.split('|');
+    List penList =  penta_date.split('|');
+    List mmrList =  mmr_date.split('|');
+    List jeList =  je_date.split('|');
+
+    opv_date1 = opvList.length > 0 ? opvList[0] : "${todayDate.toLocal()}".split(' ')[0];
+    penta_date1 = penList.length > 0 ? penList[0] : "${todayDate.toLocal()}".split(' ')[0];
+    mmr_date1 = mmrList.length > 0 ? mmrList[0] : "${todayDate.toLocal()}".split(' ')[0];
+    je_date1 = jeList.length > 0 ? jeList[0] : "${todayDate.toLocal()}".split(' ')[0];
+
+    opv_date2 = opvList.length > 1 ? opvList[1] : "${todayDate.toLocal()}".split(' ')[0];
+    penta_date2 = penList.length > 1 ? penList[1] : "${todayDate.toLocal()}".split(' ')[0];
+    mmr_date2 = mmrList.length > 1 ? mmrList[1] : "${todayDate.toLocal()}".split(' ')[0];
+    je_date2 = jeList.length > 1 ? jeList[1] : "${todayDate.toLocal()}".split(' ')[0];
+
+    opv_date3 = opvList.length > 2 ? opvList[2] : "${todayDate.toLocal()}".split(' ')[0];
+    penta_date3 = penList.length > 2 ? penList[2] : "${todayDate.toLocal()}".split(' ')[0];
+    mmr_date3 = mmrList.length > 2 ? mmrList[2] : "${todayDate.toLocal()}".split(' ')[0];
+    je_date3 = jeList.length > 2 ? jeList[2] : "${todayDate.toLocal()}".split(' ')[0];
+
+    _isCheckedBCG = widget.reachCollectVo.bcg != null ? true : false;
+
+    _isCheckedOPV1 = opvList.length > 0 ? true : false;
+    _isCheckedOPV2 = opvList.length > 1 ? true : false;
+    _isCheckedOPV3 = opvList.length > 2 ? true : false;
+
+    _isCheckedPenta1 = penList.length > 0 ? true : false;
+    _isCheckedPenta2 = penList.length > 1 ? true : false;
+    _isCheckedPenta3 = penList.length > 2 ? true : false;
+
+    _isCheckedMMR1 = mmrList.length > 0 ? true : false;
+    _isCheckedMMR2 = mmrList.length > 1 ? true : false;
+    _isCheckedMMR3 = mmrList.length > 2 ? true : false;
+
+    _isCheckedJE1 = jeList.length > 0 ? true : false;
+    _isCheckedJE2 = jeList.length > 1  ? true : false;
+    _isCheckedJE3 = jeList.length > 2 ? true : false;
 
   }
 
@@ -564,7 +642,8 @@ class _EditEPICState extends State<EditEPI> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    //dorp down
+
+                    //BCG
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -576,12 +655,624 @@ class _EditEPICState extends State<EditEPI> {
                         const SizedBox(
                           height: 10,
                         ),
-                        DropdownListView(containerWidth: 250,
-                          value: (String value, int index) {
-                          bcgValue = value;
-                          }, options: AppConstants.bcgList, currentValue: bcgValue,),
+                        Checkbox(
+                          value: _isCheckedBCG,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isCheckedBCG = value!;
+                            });
+                          },
+                          activeColor: AppTheme.secondaryColor,
+                          checkColor: Colors.white,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            bcg_date = dateString;
+                          },
+                          updateDateString: bcg_date,
+                        ),
                       ],
                     ),
+
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 40,
+                ),
+
+                //Row 3
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+
+                    //ပိုလီယို (OPV/bOPV)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'ပိုလီယို (OPV/bOPV)',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedOPV1,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedOPV1 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'ပထမအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            opv_date1 = dateString;
+                          },
+                          updateDateString: opv_date1,
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 40,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedOPV2,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedOPV2 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'ဒုတိယအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            opv_date2 = dateString;
+                          },
+                          updateDateString: opv_date2,
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 40,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedOPV3,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedOPV3 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'တတိယအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            opv_date3 = dateString;
+                          },
+                          updateDateString: opv_date3,
+                        ),
+                      ],
+                    ),
+
+
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 40,
+                ),
+
+                //Row 3.1
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+
+                    //ငါးမျိုးစပ်ကာကွယ်ဆေး
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'ငါးမျိုးစပ်ကာကွယ်ဆေး \n (Penta/ DPT-HepB-Hib)',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedPenta1,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedPenta1 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'ပထမအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            penta_date1 = dateString;
+                          },
+                          updateDateString: penta_date1,
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+                        const SizedBox(
+                          height: 70,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedPenta2,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedPenta2 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'ဒုတိယအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            penta_date2 = dateString;
+                          },
+                          updateDateString: penta_date2,
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+                        const SizedBox(
+                          height: 70,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedPenta3,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedPenta3 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'တတိယအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            penta_date3 = dateString;
+                          },
+                          updateDateString: penta_date3,
+                        ),
+                      ],
+                    ),
+
+
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 40,
+                ),
+
+                //Row 3.2
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+
+                    //ပပါးချိတ်ယောင်၊ ဝက်သက်၊ ဂျိုက်သိုး (MMR)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'ပါးချိတ်ယောင်၊ ဝက်သက်၊ \nဂျိုက်သိုး (MMR)',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedMMR1,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedMMR1 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'ပထမအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            mmr_date1 = dateString;
+                          },
+                          updateDateString: mmr_date1,
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 70,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedMMR2,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedMMR2 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'ဒုတိယအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            mmr_date2 = dateString;
+                          },
+                          updateDateString: mmr_date2,
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 70,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedMMR3,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedMMR3 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'တတိယအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            mmr_date3 = dateString;
+                          },
+                          updateDateString: mmr_date3,
+                        ),
+                      ],
+                    ),
+
+
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 40,
+                ),
+
+                //Row 3.3
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+
+                    //ပပါးချိတ်ယောင်၊ ဝက်သက်၊ ဂျိုက်သိုး (MMR)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'ဂျပန် ဦးနှောက်ရောင် (JE)',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedJE1,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedJE1 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'ပထမအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            je_date1 = dateString;
+                          },
+                          updateDateString: je_date1,
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 40,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedJE2,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedJE2 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'ဒုတိယအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            je_date2 = dateString;
+                          },
+                          updateDateString: je_date2,
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 40,
+                        ),
+
+                        //Three Check Box
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isCheckedJE3,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isCheckedJE3 = value!;
+                                });
+                              },
+                              activeColor: AppTheme.secondaryColor,
+                              checkColor: Colors.white,
+                            ),
+                            const Text(
+                              'တတိယအကြိမ်',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+
+
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            je_date3 = dateString;
+                          },
+                          updateDateString: je_date3,
+                        ),
+                      ],
+                    ),
+
+
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 40,
+                ),
+                //Row 3.4
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     //Is Prevent
                     SizedBox(
                       width: 250,
@@ -632,20 +1323,8 @@ class _EditEPICState extends State<EditEPI> {
                               )),
                         ],
                       ),
-                    ),
-
-
-                  ],
-                ),
-
-                const SizedBox(
-                  height: 40,
-                ),
-                //Row 4
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    //dorp down
+                    ),//
+                    // dorp down
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -661,22 +1340,6 @@ class _EditEPICState extends State<EditEPI> {
                           value: (String value, int index) { handOverValue = value; }, options: AppConstants.handoverList, currentValue: handOverValue,),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'မှတ်ချက်',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        inputBox('မှတ်ချက်', 3, remarkController,10000),
-                      ],
-                    ),
-
-                    SizedBox(width: 250,)
                   ],
                 ),
 
@@ -687,74 +1350,145 @@ class _EditEPICState extends State<EditEPI> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
 
-                          {
-                            if (nameController.text.isEmpty||
-                                addressController.text.isEmpty ||
-                                clinicTeamController.text.isEmpty ||
-                                reportingPeriod.isEmpty ||
-                                channel.isEmpty) {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                  content: Center(
-                                    child: Text('Sorry!! Please input empty fields'),
-                                  )));
-                            } else {
-                              //Add To DB
-                              EPIVo dataVo = EPIVo(
-                                  id: widget.reachCollectVo.id,
-                                  tableName: AppConstants.epiTable,
-                                  orgName: orgController.text,
-                                  stateName: _selectedKey,
-                                  townshipName: _selectedItem,
-                                  townshipLocalName: townshipLocalController.text,
-                                  clinic: clinicTeamController.text,
-                                  channel: channel,
-                                  reportingPeroid: reportingPeriod,
-                                  childName: nameController.text,
-                                  sex: gender,
-                                  disabled: disabled,
-                                  relocation: relocation,
-                                  address: addressController.text,
-                                  dob: date_of_birth,
-                                  bcg: bcgValue,
-                                  vaccined: isPrevent,
-                                  refer: isRefer,
-                                  referPlace: handOverValue,
-                                  remark: remarkController.text,
-                                  createDate: todayDateString,
-                                  updateDate: todayDateString
-                              );
+                              {
+                                if (nameController.text.isEmpty||
+                                    addressController.text.isEmpty ||
+                                    clinicTeamController.text.isEmpty ||
+                                    reportingPeriod.isEmpty ||
+                                    channel.isEmpty) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                      content: Center(
+                                        child: Text('Sorry!! Please input empty fields'),
+                                      )));
+                                } else {
+                                  String bcg = "";
+                                  String opv = "";
+                                  String penta = "";
+                                  String mmr = "";
+                                  String je = "";
 
-                              try {
+                                  print("BCG CHECK :: $_isCheckedBCG");
 
-                                //  DatabaseProvider provider = DatabaseProvider.db;
-                                // provider.insertACNDataToDB(dataVo);
-                                helper.updateEPIInto(dataVo);
+                                  if (_isCheckedBCG){
+                                    print("BCG DATE $bcg_date");
+                                    bcg = bcg_date;
+                                  }
 
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (builder) =>
-                                            HomeScreen(indexOfTab: 0, selectedSideIndex: 1,)));
-                              } catch (e) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                    content: Center(
-                                      child: Text('Something wrong!!'),
-                                    )));
+                                  if (_isCheckedOPV1){
+                                    opv = opv_date1;
+                                  }
+                                  if (_isCheckedOPV2){
+                                    opv += "|$opv_date2";
+                                  }
+                                  if (_isCheckedOPV3){
+                                    opv += "|$opv_date3";
+                                  }
+
+                                  if (_isCheckedPenta1){
+                                    penta = penta_date1;
+                                  }
+                                  if (_isCheckedPenta2){
+                                    penta += "|$penta_date2";
+                                  }
+                                  if (_isCheckedPenta3){
+                                    penta += "|$penta_date3";
+                                  }
+
+                                  if (_isCheckedMMR1){
+                                    mmr = mmr_date1;
+                                  }
+                                  if (_isCheckedMMR2){
+                                    mmr += "|$mmr_date2";
+                                  }
+                                  if (_isCheckedMMR3){
+                                    mmr += "|$mmr_date3";
+                                  }
+
+                                  if (_isCheckedJE1){
+                                    je = je_date1;
+                                  }
+                                  if (_isCheckedJE2){
+                                    je += "|$je_date2";
+                                  }
+                                  if (_isCheckedJE3){
+                                    je += "|$je_date3";
+                                  }
+                                  //Add To DB
+                                  EPIVo dataVo = EPIVo(
+                                      id: widget.reachCollectVo.id,
+                                      tableName: AppConstants.epiTable,
+                                      orgName: orgController.text,
+                                      stateName: _selectedKey,
+                                      townshipName: _selectedItem,
+                                      townshipLocalName: townshipLocalController.text,
+                                      clinic: clinicTeamController.text,
+                                      channel: channel,
+                                      reportingPeroid: reportingPeriod,
+                                      childName: nameController.text,
+                                      sex: gender,
+                                      disabled: disabled,
+                                      relocation: relocation,
+                                      address: addressController.text,
+                                      dob: date_of_birth,
+                                      bcg: bcg,
+                                      opv: opv,
+                                      penta: penta,
+                                      mmr: mmr,
+                                      je: je,
+                                      vaccined: isPrevent,
+                                      refer: isRefer,
+                                      referPlace: handOverValue,
+                                      remark: remarkController.text,
+                                      createDate: todayDateString,
+                                      updateDate: todayDateString
+                                  );
+
+                                  try {
+
+                                    //  DatabaseProvider provider = DatabaseProvider.db;
+                                    // provider.insertACNDataToDB(dataVo);
+                                    helper.updateEPIInto(dataVo);
+
+                                    Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (builder) =>
+                                                HomeScreen(indexOfTab: 0, selectedSideIndex: 1,)));
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                        content: Center(
+                                          child: Text('Something wrong!!'),
+                                        )));
+                                  }
+
+                                  //End add to DB
+
+                                }
                               }
 
-                              //End add to DB
-
                             }
-                          }
-
-                        }
+                        ),
+                      ],
                     ),
+
                   ),
                 ),
               ],

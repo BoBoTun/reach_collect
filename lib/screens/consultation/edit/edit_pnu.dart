@@ -780,7 +780,7 @@ class _EditPNUState extends State<EditPNU> {
                                 },
                                 activeValue: amclin, radioList: ['အလုံး','အရည်'],
                               )),
-                          halfInputBox('အရည်အတွက်', amoSislinController,10000),
+                          halfInputBox('အရေအတွက်', amoSislinController,10000),
                         ],
                       ),
                     ),
@@ -813,7 +813,7 @@ class _EditPNUState extends State<EditPNU> {
                             height: 2,
                           ),
 
-                          halfInputBox('အရည်အတွက်', saltPackageContoller,10000),
+                          halfInputBox('အရေအတွက်', saltPackageContoller,10000),
                         ],
                       ),
                     ),
@@ -846,7 +846,7 @@ class _EditPNUState extends State<EditPNU> {
                             height: 2,
                           ),
 
-                          halfInputBox('အရည်အတွက်', zincSulphateWholeController,10000),
+                          halfInputBox('အရေအတွက်', zincSulphateWholeController,10000),
                         ],
                       ),
                     ),
@@ -879,7 +879,7 @@ class _EditPNUState extends State<EditPNU> {
                             height: 2,
                           ),
 
-                          halfInputBox('အရည်အတွက်', paracetamolWholeController,10000),
+                          halfInputBox('အရေအတွက်', paracetamolWholeController,10000),
                         ],
                       ),
                     ),
@@ -906,7 +906,7 @@ class _EditPNUState extends State<EditPNU> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('ကုသသည့်ကာလ', 1, treatmentPeriodController,10000),
+                        inputBox('ကုသသည့်ကာလ', 1, treatmentPeriodController,3),
                       ],
                     ),
                     SizedBox(
@@ -1016,97 +1016,108 @@ class _EditPNUState extends State<EditPNU> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
-                          {
-                            if (nameController.text.isEmpty||
-                                ageController.text.isEmpty ||
-                                villageNameController.text.isEmpty ||
-                                volunteerNameController.text.isEmpty ||
-                                treatmentPeriodController.text.isEmpty ||
-                                amoSislinController.text.isEmpty ||
-                                saltPackageContoller.text.isEmpty ||
-                                zincSulphateWholeController.text.isEmpty ||
-                                paracetamolWholeController.text.isEmpty ||
-                                reportingPeriod.isEmpty) {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                  content: Center(
-                                    child: Text('Sorry!! Please input empty fields'),
-                                  )));
-                            } else {
-                              //Check Validation for Age
-                              var age = int.parse(ageController.text);
-                              if (age > 0 && age < 101) {
-                                String trementValue = "$amclin||${amoSislinController.text}||${saltPackageContoller.text}||${zincSulphateWholeController.text}||${paracetamolWholeController.text}";
-                                PNUVo dataVo = PNUVo(
-                                    id: widget.reachCollectVo.id,
-                                    tableName: AppConstants.pnuTable,
-                                    orgName: orgController.text,
-                                    stateName: _selectedKey,
-                                    townshipName: _selectedItem,
-                                    townshipLocalName: townshipLocalController.text,
-                                    clinic: clinic,
-                                    villageName: villageNameController.text,
-                                    volunteerName: volunteerNameController.text,
-                                    reportingPeroid: reportingPeriod,
-                                    date: date,
-                                    name: nameController.text,
-                                    age: ageController.text,
-                                    sex: gender,
-                                    disabled: disabled,
-                                    relocation: relocation,
-                                    kofPatient: patientType,
-                                    symptomsList: selectSymptomsList,
-                                    diseaseList: selectTypeOfDiseaseList,
-                                    treatment: trementValue,
-                                    treatmentPeriod: treatmentPeriodController.text,
-                                    refer: isPrevent,
-                                    referPlace: handOverValue,
-                                    referGo: referGo,
-                                    remark: remarkController.text,
-                                    createDate: todayDateString,
-                                    updateDate: todayDateString);
-                                //Add To DB
-
-                                try {
-                                  // PreferenceManager.setString(CLINIC, clinicTeamController.text);
-                                  // PreferenceManager.setString(CHANNEL, channel);
-                                  // PreferenceManager.setString(REPORT_PERIOD, reportingPeriod);
-                                  //  DatabaseProvider provider = DatabaseProvider.db;
-                                  // provider.insertACNDataToDB(dataVo);
-                                  helper.updatePNUInto(dataVo);
-
-                                  Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (builder) =>
-                                              HomeScreen(indexOfTab: 2, selectedSideIndex: 1,)));
-                                } catch (e) {
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
+                              {
+                                if (nameController.text.isEmpty||
+                                    ageController.text.isEmpty ||
+                                    villageNameController.text.isEmpty ||
+                                    volunteerNameController.text.isEmpty ||
+                                    treatmentPeriodController.text.isEmpty ||
+                                    reportingPeriod.isEmpty) {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(const SnackBar(
                                       content: Center(
-                                        child: Text('Something wrong!!'),
+                                        child: Text('Sorry!! Please input empty fields'),
                                       )));
+                                } else {
+                                  //Check Validation for Age
+                                  var age = int.parse(ageController.text);
+                                  if (age > 0 && age < 101) {
+                                    String trementValue = "$amclin||${amoSislinController.text}||${saltPackageContoller.text}||${zincSulphateWholeController.text}||${paracetamolWholeController.text}";
+                                    PNUVo dataVo = PNUVo(
+                                        id: widget.reachCollectVo.id,
+                                        tableName: AppConstants.pnuTable,
+                                        orgName: orgController.text,
+                                        stateName: _selectedKey,
+                                        townshipName: _selectedItem,
+                                        townshipLocalName: townshipLocalController.text,
+                                        clinic: clinic,
+                                        villageName: villageNameController.text,
+                                        volunteerName: volunteerNameController.text,
+                                        reportingPeroid: reportingPeriod,
+                                        date: date,
+                                        name: nameController.text,
+                                        age: ageController.text,
+                                        sex: gender,
+                                        disabled: disabled,
+                                        relocation: relocation,
+                                        kofPatient: patientType,
+                                        symptomsList: selectSymptomsList,
+                                        diseaseList: selectTypeOfDiseaseList,
+                                        treatment: trementValue,
+                                        treatmentPeriod: treatmentPeriodController.text,
+                                        refer: isPrevent,
+                                        referPlace: handOverValue,
+                                        referGo: referGo,
+                                        remark: remarkController.text,
+                                        createDate: todayDateString,
+                                        updateDate: todayDateString);
+                                    //Add To DB
+
+                                    try {
+                                      // PreferenceManager.setString(CLINIC, clinicTeamController.text);
+                                      // PreferenceManager.setString(CHANNEL, channel);
+                                      // PreferenceManager.setString(REPORT_PERIOD, reportingPeriod);
+                                      //  DatabaseProvider provider = DatabaseProvider.db;
+                                      // provider.insertACNDataToDB(dataVo);
+                                      helper.updatePNUInto(dataVo);
+
+                                      Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                              builder: (builder) =>
+                                                  HomeScreen(indexOfTab: 2, selectedSideIndex: 1,)));
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                          content: Center(
+                                            child: Text('Something wrong!!'),
+                                          )));
+                                    }
+
+                                    //End add to DB
+
+                                  }else{
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                        content: Center(
+                                          child: Text('Age should be between 1 to 100 years !!!'),
+                                        )));
+
+                                  }
+
                                 }
-
-                                //End add to DB
-
-                              }else{
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                    content: Center(
-                                      child: Text('Age should be between 1 to 100 years !!!'),
-                                    )));
-
                               }
 
                             }
-                          }
-
-                        }
+                        ),
+                      ],
                     ),
+
                   ),
                 ),
               ],
@@ -1130,7 +1141,7 @@ class _EditPNUState extends State<EditPNU> {
           ]),
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: controller == ageController
+        child: controller == ageController || controller == treatmentPeriodController
             ? TextField(
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly,
@@ -1170,6 +1181,10 @@ class _EditPNUState extends State<EditPNU> {
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
         child: TextField(
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(limit),
+          ],
           controller: controller,
           decoration: InputDecoration(
               border: InputBorder.none,

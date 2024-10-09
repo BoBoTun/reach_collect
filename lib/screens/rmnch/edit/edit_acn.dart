@@ -7,6 +7,7 @@ import 'package:reach_collect/screens/home_screen.dart';
 import 'package:reach_collect/utils/app_styles.dart';
 import 'package:reach_collect/widgets/button_widget.dart';
 import 'package:reach_collect/widgets/date_picker.dart';
+import 'package:reach_collect/widgets/multi_radio.dart';
 import 'package:reach_collect/widgets/radio_button.dart';
 
 import '../../../utils/app_constant.dart';
@@ -38,6 +39,7 @@ class _EditANCState extends State<EditANC> {
   String attendedby = '';
   String outcome = '';
   String ancFour = '';
+  String ageSymbol = 'Years';
   final TextEditingController orgController = TextEditingController();
   final TextEditingController townshipLocalController = TextEditingController();
 
@@ -55,6 +57,7 @@ class _EditANCState extends State<EditANC> {
   TextEditingController findingsController = TextEditingController();
   TextEditingController treatmentController = TextEditingController();
   TextEditingController remarkController = TextEditingController();
+  TextEditingController nOfANCVisitController = TextEditingController();
 
   @override
   void initState() {
@@ -63,10 +66,11 @@ class _EditANCState extends State<EditANC> {
     disability = widget.reachCollectVo.disability ?? '';
     idp = widget.reachCollectVo.idp ?? '';
     nameController.text = widget.reachCollectVo.name ?? '';
-    ageController.text = widget.reachCollectVo.age ?? '';
+
     gestationalWeekController.text = widget.reachCollectVo.gestational ?? '';
     gravidaController.text = widget.reachCollectVo.gravida ?? '';
     parityController.text = widget.reachCollectVo.parity ?? '';
+    nOfANCVisitController.text = widget.reachCollectVo.noOfANC ?? '';
     findingsController.text = widget.reachCollectVo.findings ?? '';
     treatmentController.text = widget.reachCollectVo.treatment ?? '';
     remarkController.text = widget.reachCollectVo.remark ?? '';
@@ -93,6 +97,9 @@ class _EditANCState extends State<EditANC> {
     print("Initial Selected String ::: ${widget.reachCollectVo.td}");
     tdSelectString = widget.reachCollectVo.td ?? '';
 
+    List ageList = (widget.reachCollectVo.age ?? '').split('|');
+    ageController.text = ageList[0];
+    ageSymbol = ageList[1];
 
   }
 
@@ -443,7 +450,7 @@ class _EditANCState extends State<EditANC> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Name',
+                          'Name *',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -459,14 +466,20 @@ class _EditANCState extends State<EditANC> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Age (number only)',
+                          'Age *',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Age (number only)', 1, ageController,3),
+                        Row(
+                          children: [
+                            small_inputBox('Age', 1, ageController, 3),
+                            SizedBox(width: 20,),
+                            DropdownListView(containerWidth: 160, value: (String value, int index) { ageSymbol = value; }, options: ['Years','Months'], currentValue: ageSymbol,),
+                          ],
+                        )
                       ],
                     )
                   ],
@@ -494,11 +507,10 @@ class _EditANCState extends State<EditANC> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: HorizontalRadioButton(
+                              child: MultiRadio(
                                 radioValue: (String value) {
                                   disability = value;
-                                },
-                                activeValue: disability,
+                                }, activeValue: disability,
                               )),
                         ],
                       ),
@@ -520,7 +532,7 @@ class _EditANCState extends State<EditANC> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: HorizontalRadioButton(
+                              child: MultiRadio(
                                 radioValue: (String value) {
                                   idp = value;
                                 },
@@ -531,8 +543,19 @@ class _EditANCState extends State<EditANC> {
                     ),
 
                     //extra space
-                    const SizedBox(
-                      width: 250,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Gestational Week *',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Gestational Week', 1, gestationalWeekController,2),
+                      ],
                     )
                   ],
                 ),
@@ -548,22 +571,7 @@ class _EditANCState extends State<EditANC> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Gestational Week',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        inputBox('Gestational Week', 1, gestationalWeekController,2),
-                      ],
-                    ),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Gravida',
+                          'Gravida *',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -577,7 +585,7 @@ class _EditANCState extends State<EditANC> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Parity',
+                          'Parity *',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -586,7 +594,21 @@ class _EditANCState extends State<EditANC> {
                         ),
                         inputBox('Parity', 1, parityController,2),
                       ],
-                    )
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'No. of ANC visit',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('No. of ANC visit', 1, nOfANCVisitController,4),
+                      ],
+                    ),
                   ],
                 ),
 
@@ -625,7 +647,7 @@ class _EditANCState extends State<EditANC> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Findings',
+                          'Findings *',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -639,7 +661,7 @@ class _EditANCState extends State<EditANC> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Treatment',
+                          'Treatment *',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -765,94 +787,127 @@ class _EditANCState extends State<EditANC> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Update',
-                        onPressed: () {
-                          if (nameController.text.isEmpty ||
-                              ageController.text.isEmpty ||
-                              gestationalWeekController.text.isEmpty ||
-                              gravidaController.text.isEmpty ||
-                              parityController.text.isEmpty ||
-                              findingsController.text.isEmpty ||
-                              treatmentController.text.isEmpty) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
+                    width: 600,
+                    child:
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Update',
+                            type: 0,
+                            onPressed: () {
+                              if (nameController.text.isEmpty ||
+                                  ageController.text.isEmpty ||
+                                  gestationalWeekController.text.isEmpty ||
+                                  gravidaController.text.isEmpty ||
+                                  parityController.text.isEmpty ||
+                                  findingsController.text.isEmpty ||
+                                  treatmentController.text.isEmpty) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
                                     content: Center(
-                              child: Text('Sorry!! Please input empty fields'),
-                            )));
-                          } else {
+                                      child: Text('Sorry!! Please input empty fields'),
+                                    )));
+                              } else {
 
 
-                            var age = int.parse(ageController.text);
-                            var gestation = int.parse(gestationalWeekController.text);
-                            var gravida = int.parse(gravidaController.text);
-                            var parity = int.parse(parityController.text);
-                            if (age > 0 && age < 101) {
+                                var age = int.parse(ageController.text);
+                                var gestation = int.parse(gestationalWeekController.text);
+                                var gravida = int.parse(gravidaController.text);
+                                var parity = int.parse(parityController.text);
+                                if (age > 0 && age < 101) {
 
-                              if (gestation > 0 && gestation < 43){
+                                  if (gestation > 0 && gestation < 43){
 
-                                if (gravida > 0 && gravida < 21){
+                                    if (gravida > 0 && gravida < 21){
 
-                                  if (parity > 0 && parity < 21){
+                                      if (parity > -1 && parity < 21){
 
-                                    //Add To DB
+                                        //Add To DB
 
-                                    try {
-                                      ANCVo dataVo = ANCVo(
-                                          id: widget.reachCollectVo.id,
-                                          tableName: AppConstants.ancTable,
-                                          orgName: orgController.text,
-                                          stateName: _selectedKey,
-                                          townshipName: _selectedItem,
-                                          townshipLocalName: townshipLocalController.text,
-                                          clinic: clinicTeamController.text,
-                                          channel: channel,
-                                          reportingPeroid: reportingPeriod,
-                                          date: date,
-                                          name: nameController.text,
-                                          age: ageController.text,
-                                          disability: disability,
-                                          idp: idp,
-                                          gestational: gestationalWeekController.text,
-                                          gravida: gravidaController.text,
-                                          parity: parityController.text,
-                                          td: tdSelectString,//tdController.text,
-                                          findings: findingsController.text,
-                                          treatment: treatmentController.text,
-                                          ancfour: ancFour,
-                                          attended: attendedby,//attendedController.text,
-                                          outcome: outcome,//outcomeController.text,
-                                          remark: remarkController.text,
-                                          createDate: createDate,
-                                          updateDate: todayDateString);
+                                        try {
+                                          ANCVo dataVo = ANCVo(
+                                              id: widget.reachCollectVo.id,
+                                              tableName: AppConstants.ancTable,
+                                              orgName: orgController.text,
+                                              stateName: _selectedKey,
+                                              townshipName: _selectedItem,
+                                              townshipLocalName: townshipLocalController.text,
+                                              clinic: clinicTeamController.text,
+                                              channel: channel,
+                                              reportingPeroid: reportingPeriod,
+                                              date: date,
+                                              name: nameController.text,
+                                              age: '${ageController.text}|$ageSymbol',
+                                              disability: disability,
+                                              idp: idp,
+                                              gestational: gestationalWeekController.text,
+                                              gravida: gravidaController.text,
+                                              parity: parityController.text,
+                                              noOfANC: nOfANCVisitController.text,
+                                              td: tdSelectString,//tdController.text,
+                                              findings: findingsController.text,
+                                              treatment: treatmentController.text,
+                                              ancfour: ancFour,
+                                              attended: attendedby,//attendedController.text,
+                                              outcome: outcome,//outcomeController.text,
+                                              remark: remarkController.text,
+                                              createDate: createDate,
+                                              updateDate: todayDateString);
 
-                                      print("TD ::: ${dataVo.td}");
-                                      //DatabaseProvider provider = DatabaseProvider.db;
-                                      helper.updateANCInto(dataVo);
+                                          print("TD ::: ${dataVo.td}");
+                                          //DatabaseProvider provider = DatabaseProvider.db;
+                                          helper.updateANCInto(dataVo);
 
-                                      Navigator.of(context)
-                                          .pushReplacement(MaterialPageRoute(
-                                          builder: (builder) => HomeScreen(
-                                            indexOfTab: 0, selectedSideIndex: 0,
-                                          )));
-                                    } catch (e) {
+                                          Navigator.of(context)
+                                              .pushReplacement(MaterialPageRoute(
+                                              builder: (builder) => HomeScreen(
+                                                indexOfTab: 0, selectedSideIndex: 0,
+                                              )));
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                              content: Center(
+                                                child: Text('Something wrong!!'),
+                                              )));
+                                        }
+                                        //End add to DB
+
+
+                                      }else{
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                            content: Center(
+                                              child: Text('Parity should be 0 to 20 !!!'),
+                                            )));
+
+                                      }
+
+
+                                    }else{
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(const SnackBar(
                                           content: Center(
-                                            child: Text('Something wrong!!'),
+                                            child: Text('Gravida should be 1 to 20 !!!'),
                                           )));
                                     }
-                                    //End add to DB
+
 
 
                                   }else{
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
                                         content: Center(
-                                          child: Text('Parity should be 1 to 20 !!!'),
+                                          child: Text('Gestational Week should be 1 to 42 weeks !!!'),
                                         )));
-
                                   }
 
 
@@ -860,34 +915,19 @@ class _EditANCState extends State<EditANC> {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(const SnackBar(
                                       content: Center(
-                                        child: Text('Gravida should be 1 to 20 !!!'),
+                                        child: Text('Age should be between 1 to 100 years !!!'),
                                       )));
+
                                 }
 
 
 
-                              }else{
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                    content: Center(
-                                      child: Text('Gestational Week should be 1 to 42 weeks !!!'),
-                                    )));
                               }
+                            }),
+                      ],
+                    ),
 
 
-                            }else{
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                  content: Center(
-                                    child: Text('Age should be between 1 to 100 years !!!'),
-                                  )));
-
-                            }
-
-
-
-                          }
-                        }),
                   ),
                 ),
               ],
@@ -897,7 +937,29 @@ class _EditANCState extends State<EditANC> {
       ),
     );
   }
+  SizedBox small_inputBox(
+      String title, int maxlines, TextEditingController controller, int limit) {
 
+    return SizedBox(
+      width: 80,
+      height: 50,
+      child: TextField(
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(limit),
+        ],
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          border: const OutlineInputBorder(),
+          labelText: title,
+        ),
+      ),
+    );
+
+
+  }
   Container inputBox(
       String title, int maxlines, TextEditingController controller, int limit) {
     return Container(

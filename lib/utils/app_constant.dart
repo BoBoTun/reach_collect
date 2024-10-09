@@ -980,7 +980,82 @@ static const List<String> distributionList = [
     'Under5': ['EPI', 'MUAC', 'Pnu&Diarr'],
     'Summary': ['Consultation','Distribution','Health Education','Referral']
   };
+  static const List<String> tbReferralPlaceList = [
+    'ဆေးရုံ',
+    'ကွင်းဆင်းကုသခြင်း',
+    'အခြား'
+  ];
 
+  static const List<String> tbCheckList = [
+    'သလိပ်',
+    'GeneXpert',
+    'ဓါတ်မှန်'
+  ];
+
+  static const List<String> hivReasonList = [
+    'Death',
+    'Loss to follow up',
+    'Transfer out'
+  ];
+
+  static const List<List<String>> artFollowupList = [[
+    'Date',
+    'Outcome',
+    'TB Status',
+    'Adherence',
+    'Viral load',
+    'Next vist date',
+    ' ']];
+
+  static const List<List<String>> tbFollowupList = [[
+    'Date',
+    'S',
+    'X',
+    'T',
+    'Lab No',
+    'Remark',
+    ' ']];
+
+
+  static const List<String> tbSymptomsList = [
+    'Cough >= 2wk',
+    'Fever',
+    'Weight Loss',
+    'Night Sweat',
+    'Other'];
+
+  static const List<String> hivStatusList = [
+    'Positive',
+    'Negative',
+    'Unknown'
+  ];
+
+  static const List<String> tbPatientTypeList = [
+    'N',
+    'R',
+    'F',
+    'LFU',
+    'O',
+    'UNK'
+  ];
+
+  static const List<String> tbDiseaseList = [
+    'P',
+    'EP'
+  ];
+
+  static const List<String> tbTreatmentRegimenList = [
+    'IR',
+    'RR',
+    'CR',
+    'MR'
+  ];
+
+  static const List<String> tbDMStatusList = [
+    'Y',
+    'N',
+    'U'
+  ];
 
   static const String ancTable = "ANCTable";
   static const String deliveryTable = "DeliveryTable";

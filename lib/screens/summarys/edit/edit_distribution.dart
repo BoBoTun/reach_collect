@@ -41,6 +41,10 @@ class _EditDistributionState extends State<EditDistribution> {
   TextEditingController item2Controller = TextEditingController();
   TextEditingController item3Controller = TextEditingController();
 
+  TextEditingController item1ControllerQty = TextEditingController();
+  TextEditingController item2ControllerQty = TextEditingController();
+  TextEditingController item3ControllerQty = TextEditingController();
+
   TextEditingController householdController = TextEditingController();
 
 
@@ -94,9 +98,17 @@ class _EditDistributionState extends State<EditDistribution> {
         remarkController.text = widget.reachCollectVo.remark ?? '';
         clinicTeamController.text = widget.reachCollectVo.clinic ?? '';
 
-        item1Controller.text = widget.reachCollectVo.item1 ?? '';
-        item2Controller.text = widget.reachCollectVo.item2 ?? '';
-        item3Controller.text = widget.reachCollectVo.item3 ?? '';
+        List item1 = (widget.reachCollectVo.item1 ?? '').split('|');
+    List item2 = (widget.reachCollectVo.item2 ?? '').split('|');
+    List item3 = (widget.reachCollectVo.item3 ?? '').split('|');
+
+        item1Controller.text = item1[0];
+        item2Controller.text = item2[0];
+        item3Controller.text = item3[0];
+
+    item1ControllerQty.text = item1[1];
+    item2ControllerQty.text = item2[1];
+    item3ControllerQty.text = item3[1];
 
         householdController.text = widget.reachCollectVo.household ?? '';
 
@@ -516,7 +528,12 @@ class _EditDistributionState extends State<EditDistribution> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Item 1', 1, item1Controller,10000),
+                        inputBox('Item 1 name', 1, item1Controller,10000),
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Item 1 Qty', 1, item1ControllerQty,5),
                       ],
                     ),
                     Column(
@@ -530,7 +547,11 @@ class _EditDistributionState extends State<EditDistribution> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Item 2', 1, item2Controller,10000),
+                        inputBox('Item 2 name', 1, item2Controller,10000),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Item 2 Qty', 1, item2ControllerQty,5),
                       ],
                     ),
                     Column(
@@ -544,7 +565,11 @@ class _EditDistributionState extends State<EditDistribution> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Item 3', 1, item3Controller,10000),
+                        inputBox('Item 3 name', 1, item3Controller,10000),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Item 3 Qty', 1, item3ControllerQty,5),
                       ],
                     ),
 
@@ -569,7 +594,7 @@ class _EditDistributionState extends State<EditDistribution> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('# of Household', 1, householdController,10000),
+                        inputBox('# of Household', 1, householdController,3),
                       ],
                     ),
 
@@ -707,11 +732,23 @@ class _EditDistributionState extends State<EditDistribution> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
-                          /*
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
+                              /*
                           if (nameController.text.isEmpty ) {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(
@@ -720,49 +757,52 @@ class _EditDistributionState extends State<EditDistribution> {
                                 )));
                           }
                           */
-                          //Add To DB
-                          DistributionVo dataVo = DistributionVo(
-                            id: widget.reachCollectVo.id,
-                              tableName : AppConstants.consultationTable,
-                              orgName: PreferenceManager.getString(ORG),
-                              stateName: PreferenceManager.getString(STATE),
-                              townshipName: PreferenceManager.getString(REGION),
-                              townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
-                              clinic: clinicTeamController.text,
-                              reportingPeroid: reportingPeriod,
-                              date: date,
-                              distribution: distribution,
-                              beneficiary: beneficiary,
-                              item1: item1Controller.text,
-                              item2: item2Controller.text,
-                              item3: item3Controller.text,
-                              household: householdController.text,
-                              under18: "${under18M.text}|${under18F.text}",
-                              over18: "${over18M.text}|${over18F.text}",
-                              iDP: "${idpM.text}|${idpF.text}",
-                              disability: "${disabilityM.text}|${disabilityF.text}",
-                              remark: remarkController.text,
-                              createDate: widget.reachCollectVo.createDate,
-                              updateDate: todayDateString
-                          );
+                              //Add To DB
+                              DistributionVo dataVo = DistributionVo(
+                                  id: widget.reachCollectVo.id,
+                                  tableName : AppConstants.consultationTable,
+                                  orgName: PreferenceManager.getString(ORG),
+                                  stateName: PreferenceManager.getString(STATE),
+                                  townshipName: PreferenceManager.getString(REGION),
+                                  townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
+                                  clinic: clinicTeamController.text,
+                                  reportingPeroid: reportingPeriod,
+                                  date: date,
+                                  distribution: distribution,
+                                  beneficiary: beneficiary,
+                                  item1: item1Controller.text,
+                                  item2: item2Controller.text,
+                                  item3: item3Controller.text,
+                                  household: householdController.text,
+                                  under18: "${under18M.text}|${under18F.text}",
+                                  over18: "${over18M.text}|${over18F.text}",
+                                  iDP: "${idpM.text}|${idpF.text}",
+                                  disability: "${disabilityM.text}|${disabilityF.text}",
+                                  remark: remarkController.text,
+                                  createDate: widget.reachCollectVo.createDate,
+                                  updateDate: todayDateString
+                              );
 
-                          try {
-                            helper.updateDistributionInto(dataVo);
+                              try {
+                                helper.updateDistributionInto(dataVo);
 
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (builder) =>
-                                        HomeScreen(indexOfTab: 1, selectedSideIndex: 2,)));
-                          } catch (e) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                                content: Center(
-                                  child: Text('Something wrong!!'),
-                                )));
-                          }
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (builder) =>
+                                            HomeScreen(indexOfTab: 1, selectedSideIndex: 2,)));
+                              } catch (e) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                    content: Center(
+                                      child: Text('Something wrong!!'),
+                                    )));
+                              }
 
-                          //End add to DB
-                        }),
+                              //End add to DB
+                            }),
+                      ],
+                    ),
+
                   ),
                 ),
               ],
@@ -810,7 +850,22 @@ class _EditDistributionState extends State<EditDistribution> {
           ]),
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: TextField(
+        child: controller == householdController ||
+            controller == item1ControllerQty ||
+            controller == item2ControllerQty ||
+            controller == item3ControllerQty
+            ? TextField(
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(limit),
+          ],
+          controller: controller,
+          maxLines: maxlines,
+          decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: title,
+              hintStyle: const TextStyle(color: Colors.grey)),
+        ) : TextField(
           controller: controller,
           maxLines: maxlines,
           decoration: InputDecoration(

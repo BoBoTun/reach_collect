@@ -39,7 +39,7 @@ class _HorizontalRadioButtonsDemoState
       body: Row(
         children: <Widget>[
           Radio(
-            value: 'true',
+            value: 'Yes',
             groupValue: _selectedValue,
             onChanged: _handleRadioValueChanged,
             fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
@@ -52,7 +52,7 @@ class _HorizontalRadioButtonsDemoState
           const Text('Yes'),
           const SizedBox(width: 10,),
           Radio(
-            value: 'false',
+            value: 'No',
             groupValue: _selectedValue,
             onChanged: _handleRadioValueChanged,
             fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {

@@ -6,7 +6,8 @@ class ButtonWidget extends StatefulWidget {
 
   final String buttonText;
   final VoidCallback? onPressed;
-  const ButtonWidget({super.key, required this.buttonText, this.onPressed});
+  final int? type;
+  const ButtonWidget({super.key, required this.buttonText, this.onPressed, this.type});
 
   @override
   State<ButtonWidget> createState() => _ButtonWidgetState();
@@ -16,11 +17,11 @@ class _ButtonWidgetState extends State<ButtonWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.82,
-      height: MediaQuery.of(context).size.height * 0.28,
+      width: 250,
+      height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: AppTheme.secondaryColor,
+        color: widget.type == 1 ? AppTheme.cancelColor : AppTheme.secondaryColor,
         borderRadius: BorderRadius.circular(25),
         boxShadow: const [
           BoxShadow(

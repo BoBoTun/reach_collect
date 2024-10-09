@@ -17,6 +17,7 @@ class ANCVo {
   String? gestational;
   String? gravida;
   String? parity;
+  String? noOfANC;
   String? td;
   String? findings;
   String? treatment;
@@ -45,6 +46,7 @@ class ANCVo {
     this.gestational,
     this.gravida,
     this.parity,
+    this.noOfANC,
     this.td,
     this.findings,
     this.treatment,
@@ -75,6 +77,7 @@ class ANCVo {
       AncRegisterTable.COLUMN_NAME_Gestational: gestational,
       AncRegisterTable.COLUMN_NAME_Gravida: gravida,
       AncRegisterTable.COLUMN_NAME_Parity: parity,
+      AncRegisterTable.COLUMN_NAME_NoOfANC: noOfANC,
       AncRegisterTable.COLUMN_NAME_Td: td,
       AncRegisterTable.COLUMN_NAME_Findings: findings,
       AncRegisterTable.COLUMN_NAME_Treatment: treatment,

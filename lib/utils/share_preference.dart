@@ -17,11 +17,18 @@ class PreferenceManager {
   static Future<bool> setString(String key, String value) async =>
       await _prefs.setString(key, value);
 
+  static Future<bool> setStringList(String key,List<String> list) async =>
+    //SharedPreferences prefs = await SharedPreferences.getInstance();
+    await _prefs.setStringList(key, list);
+
+
 
   //gets
   static bool? getBool(String key) => _prefs.getBool(key);
 
   static String? getString(String key) => _prefs.getString(key);
+
+  static List<String>? getStringList(String key) => _prefs.getStringList(key);
 
   //deletes..
   static Future<bool> remove(String key) async => await _prefs.remove(key);

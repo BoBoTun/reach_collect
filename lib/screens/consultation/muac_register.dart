@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:reach_collect/data/model/muac_model.dart';
 
@@ -141,6 +142,33 @@ class _MUACRegisterState extends State<MUACRegister> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
+                          'Reporting Period',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        MonthPicker(dateString: (dateString) {
+                          reportingPeriod = dateString;
+                        },
+                          updateDateString: reportingPeriod,
+                        ),
+                        /*
+                        DatePicker(
+                          dateString: (dateString) {
+                            reportingPeriod = dateString;
+                          },
+                          updateDateString: reportingPeriod,
+                        ),
+                        */
+
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
                           'Clinic',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
@@ -168,21 +196,6 @@ class _MUACRegisterState extends State<MUACRegister> {
                         inputBox('ကျေးရွာအမည်', 1, villageNameController,10000),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'စေတနာ့ဝန်ထမ်းအမည်',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        inputBox('စေတနာ့ဝန်ထမ်းအမည်', 1, volunteerNameController,10000),
-                      ],
-                    ),
-
                     //channel
                   ],
                 ),
@@ -204,6 +217,20 @@ class _MUACRegisterState extends State<MUACRegister> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
 
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'စေတနာ့ဝန်ထမ်းအမည်',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('စေတနာ့ဝန်ထမ်းအမည်', 1, volunteerNameController,10000),
+                      ],
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -238,6 +265,18 @@ class _MUACRegisterState extends State<MUACRegister> {
                         inputBox('အမည်', 1, nameController,10000),
                       ],
                     ),
+
+
+                  ],
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+
+                //Row 2
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     //Age
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,20 +289,9 @@ class _MUACRegisterState extends State<MUACRegister> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('အသက်', 1, ageController,10000),
+                        inputBox('အသက်', 1, ageController,3),
                       ],
                     ),
-
-                  ],
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-
-                //Row 2
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     //Gender
                     SizedBox(
                       width: 250,
@@ -316,7 +344,19 @@ class _MUACRegisterState extends State<MUACRegister> {
                         ],
                       ),
                     ),
-                    //Relocation
+
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 40,
+                ),
+
+                //Row 3
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                //Relocation
                     SizedBox(
                       width: 250,
                       child: Column(
@@ -342,18 +382,6 @@ class _MUACRegisterState extends State<MUACRegister> {
                         ],
                       ),
                     ),
-                  ],
-                ),
-
-                const SizedBox(
-                  height: 40,
-                ),
-
-                //Row 3
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -379,23 +407,10 @@ class _MUACRegisterState extends State<MUACRegister> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('လက်မောင်းလုံးပတ်', 1, armSizeController,20),
+                        inputBox('လက်မောင်းလုံးပတ်', 1, armSizeController,3),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'ကိုယ် အလေးချိန် (ကီလိုဂရမ်)',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        inputBox('ကိုယ် အလေးချိန် (ကီလိုဂရမ်)',1, bodyWieghtController,12),
-                      ],
-                    ),
+
 
                   ],
                 ),
@@ -407,7 +422,20 @@ class _MUACRegisterState extends State<MUACRegister> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'ကိုယ် အလေးချိန် (ကီလိုဂရမ်)',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('ကိုယ် အလေးချိန် (ကီလိုဂရမ်)',1, bodyWieghtController,3),
+                      ],
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -448,7 +476,17 @@ class _MUACRegisterState extends State<MUACRegister> {
                         ],
                       ),
                     ),
-                    //dorp down
+
+                  ],
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                //Row 5
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                  //dorp down
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -464,16 +502,6 @@ class _MUACRegisterState extends State<MUACRegister> {
                           value: (String value, int index) { handOverValue = value; }, options: AppConstants.handoverList, currentValue: handOverValue,),
                       ],
                     ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                //Row 5
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-
                     SizedBox(
                       width: 250,
                       child: Column(
@@ -512,8 +540,7 @@ class _MUACRegisterState extends State<MUACRegister> {
                         ),
                         inputBox('မှတ်ချက်', 3, remarkController,10000),
                       ],
-                    ),
-                    SizedBox(width: 250,)
+                    )
                   ],
                 ),
                 const SizedBox(
@@ -523,91 +550,117 @@ class _MUACRegisterState extends State<MUACRegister> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
 
-                          {
-                          if (nameController.text.isEmpty||
-                              ageController.text.isEmpty ||
-                              phoneController.text.isEmpty ||
-                              armSizeController.text.isEmpty ||
-                              bodyWieghtController.text.isEmpty ||
-                              clinicTeamController.text.isEmpty ||
-                              reportingPeriod.isEmpty ||
-                              channel.isEmpty) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                                content: Center(
-                                  child: Text('Sorry!! Please input empty fields'),
-                                )));
-                          } else {
-                            //Check Validation for Age
-                            var age = int.parse(ageController.text);
-                            if (age > 0 && age < 101) {
+                              {
+                                if (nameController.text.isEmpty||
+                                    ageController.text.isEmpty ||
+                                    armSizeController.text.isEmpty ||
+                                    bodyWieghtController.text.isEmpty ||
+                                    clinicTeamController.text.isEmpty ||
+                                    reportingPeriod.isEmpty ||
+                                    channel.isEmpty) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                      content: Center(
+                                        child: Text('Sorry!! Please input empty fields'),
+                                      )));
+                                } else {
+                                  //Check Validation for Age
+                                  var age = int.parse(ageController.text);
+                                  var bodyWeight = int.parse(bodyWieghtController.text);
+                                  if (age > 0 && age < 101) {
 
-                              //Add To DB
-                              MUACVo dataVo = MUACVo(
-                                  tableName: AppConstants.muacTable,
-                                orgName: PreferenceManager.getString(ORG),
-                                stateName: PreferenceManager.getString(STATE),
-                                townshipName: PreferenceManager.getString(REGION),
-                                townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
-                                clinic: clinic,
-                                villageName: villageNameController.text,
-                                volunteerName: volunteerNameController.text,
-                                date: date,
-                                name: nameController.text,
-                                age: ageController.text,
-                                sex: gender,
-                                disabled: disabled,
-                                relocation: relocation,
-                                phone: phoneController.text,
-                                armSize: armSizeController.text,
-                                weight: bodyWieghtController.text,
-                                swelling: swelling,
-                                refer: isPrefer,
-                                referPlace: handOverValue,
-                                referGo: isPreferGo,
-                                remark: remarkController.text,
-                                  createDate: todayDateString,
-                                  updateDate: todayDateString);
+                                    if (bodyWeight > 0 && bodyWeight <31){
+                                      //Add To DB
+                                      MUACVo dataVo = MUACVo(
+                                          tableName: AppConstants.muacTable,
+                                          orgName: PreferenceManager.getString(ORG),
+                                          stateName: PreferenceManager.getString(STATE),
+                                          townshipName: PreferenceManager.getString(REGION),
+                                          townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
+                                          clinic: clinic,
+                                          reportingPeroid: reportingPeriod,
+                                          villageName: villageNameController.text,
+                                          volunteerName: volunteerNameController.text,
+                                          date: date,
+                                          name: nameController.text,
+                                          age: ageController.text,
+                                          sex: gender,
+                                          disabled: disabled,
+                                          relocation: relocation,
+                                          phone: phoneController.text,
+                                          armSize: armSizeController.text,
+                                          weight: bodyWieghtController.text,
+                                          swelling: swelling,
+                                          refer: isPrefer,
+                                          referPlace: handOverValue,
+                                          referGo: isPreferGo,
+                                          remark: remarkController.text,
+                                          createDate: todayDateString,
+                                          updateDate: todayDateString);
 
 
-                              try {
+                                      try {
 
-                                helper.insertMUACDataToDB(dataVo,false);
+                                        helper.insertMUACDataToDB(dataVo,false);
 
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (builder) =>
-                                            HomeScreen(indexOfTab: 1, selectedSideIndex: 1,)));
-                              } catch (e) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                    content: Center(
-                                      child: Text('Something wrong!!'),
-                                    )));
+                                        Navigator.of(context).pushReplacement(
+                                            MaterialPageRoute(
+                                                builder: (builder) =>
+                                                    HomeScreen(indexOfTab: 1, selectedSideIndex: 1,)));
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                            content: Center(
+                                              child: Text('Something wrong!!'),
+                                            )));
+                                      }
+
+                                      //End add to DB
+
+                                    }else{
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                          content: Center(
+                                            child: Text('Body weight should be between 1 to 30 Kg !!!'),
+                                          )));
+                                    }
+
+
+
+                                  }else{
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                        content: Center(
+                                          child: Text('Age should be between 1 to 100 years !!!'),
+                                        )));
+
+                                  }
+
+                                }
                               }
 
-                              //End add to DB
-
-
-                            }else{
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                  content: Center(
-                                    child: Text('Age should be between 1 to 100 years !!!'),
-                                  )));
-
                             }
-
-                          }
-                        }
-
-                        }
+                        ),
+                      ],
                     ),
+
                   ),
                 ),
               ],
@@ -631,7 +684,21 @@ class _MUACRegisterState extends State<MUACRegister> {
           ]),
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: TextField(
+        child: controller == ageController ||
+            controller == armSizeController ||
+            controller == bodyWieghtController ||
+          controller == phoneController ? TextField(
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(limit),
+          ],
+          controller: controller,
+          maxLines: maxlines,
+          decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: title,
+              hintStyle: const TextStyle(color: Colors.grey)),
+        ) :TextField(
           controller: controller,
           maxLines: maxlines,
           decoration: InputDecoration(

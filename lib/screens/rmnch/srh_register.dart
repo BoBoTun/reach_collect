@@ -14,7 +14,9 @@ import 'package:reach_collect/utils/share_preference.dart';
 import 'package:reach_collect/widgets/button_widget.dart';
 import 'package:reach_collect/widgets/custom_dropdown_widget.dart';
 import 'package:reach_collect/widgets/date_picker.dart';
+import 'package:reach_collect/widgets/double_radio.dart';
 import 'package:reach_collect/widgets/male_female_radio.dart';
+import 'package:reach_collect/widgets/multi_radio.dart';
 import 'package:reach_collect/widgets/radio_button.dart';
 
 import '../../widgets/month_picker.dart';
@@ -30,19 +32,20 @@ class _SRHRegisterScreenState extends State<SRHRegisterScreen> {
   final SQLiteHelper helper = SQLiteHelper();
   //data var
   String date = '';
-  String disability = 'true';
-  String idp = 'true';
+  String disability = '';
+  String idp = '';
   String attended = '';
   String outcome = '';
   String clinicTeam = '';
   String reportingPeriod = '';
   String tdSelectString = '1St';
   String tdSelectedDate = '';
-  String sex = 'Male';
-  String firstWeek = 'true';
+  String sex = '';
+  String firstWeek = 'Yes';
   String serviceType = '';
   String channel = '';
   String todayDateString = '';
+  String ageSymbol = '';
 
   TextEditingController nameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
@@ -71,6 +74,7 @@ class _SRHRegisterScreenState extends State<SRHRegisterScreen> {
     outcome = AppConstants.attandedList[0];
 
     todayDateString = DateFormat('yyyy-MM-dd - kk-mm-ss').format(todayDate);
+    ageSymbol = 'Years';
   }
 
 
@@ -254,14 +258,20 @@ class _SRHRegisterScreenState extends State<SRHRegisterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Age (number only)',
+                          'Age',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Age (number only)', 1, ageController,3),
+                        Row(
+                          children: [
+                            small_inputBox('Age', 1, ageController, 3),
+                            SizedBox(width: 20,),
+                            DropdownListView(containerWidth: 160, value: (String value, int index) { ageSymbol = value; }, options: ['Years','Months'], currentValue: ageSymbol,),
+                          ],
+                        )
                       ],
                     )
                   ],
@@ -289,12 +299,10 @@ class _SRHRegisterScreenState extends State<SRHRegisterScreen> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: SexRadioButton(
-                                radioValue: (String value) {
-                                  sex = value;
-                                },
-                                activeValue: sex,
-                              )),
+                              child: DoubleRadio(radioValue: (String value) {
+                                sex = value;
+                              }, activeValue: '', radioList: ['Male','Female'],)
+                          ),
                         ],
                       ),
                     ),
@@ -314,7 +322,7 @@ class _SRHRegisterScreenState extends State<SRHRegisterScreen> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: HorizontalRadioButton(
+                              child: MultiRadio(
                                 radioValue: (String value) {
                                   disability = value;
                                 },
@@ -339,7 +347,7 @@ class _SRHRegisterScreenState extends State<SRHRegisterScreen> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: HorizontalRadioButton(
+                              child: MultiRadio(
                                 radioValue: (String value) {
                                   idp = value;
                                 },
@@ -557,83 +565,99 @@ class _SRHRegisterScreenState extends State<SRHRegisterScreen> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
-                          if (nameController.text.isEmpty ||
-                              ageController.text.isEmpty ||
-                              fpComndityController.text.isEmpty ||
-                              quantityController.text.isEmpty ||
-                              findingsController.text.isEmpty ||
-                              treatmentController.text.isEmpty ||
-                              channel.isEmpty ||
-                              clinicTeamController.text.isEmpty) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                                    content: Center(
-                              child: Text('Sorry!! Please input empty fields'),
-                            )));
-                          } else {
-                            var age = int.parse(ageController.text);
-
-                            if (age > 0 && age < 101) {
-                              SRHVo dataVo = SRHVo(
-                                  tableName: AppConstants.srhTable,
-                                  orgName: PreferenceManager.getString(ORG),
-                                  stateName: PreferenceManager.getString(STATE),
-                                  townshipName:
-                                  PreferenceManager.getString(REGION),
-                                  townshipLocalName:
-                                  PreferenceManager.getString(REGION_LOCAL),
-                                  clinic: clinicTeamController.text,
-                                  channel: channel,
-                                  reportingPeroid: reportingPeriod,
-                                  date: date,
-                                  name: nameController.text,
-                                  age: ageController.text,
-                                  sex: sex,
-                                  disability: disability,
-                                  iDP: idp,
-                                  serviceType: serviceType,
-                                  firstReach: firstWeek,
-                                  fpCommodity: fpComndityController.text,
-                                  quantity: quantityController.text,
-                                  fnpDiagnosis: findingsController.text,
-                                  treatment: treatmentController.text,
-                                  attended: attended,
-                                  outcome: outcome,
-                                  remark: remarkController.text,
-                              createDate: todayDateString,
-                              updateDate: todayDateString);
-
-                              try {
-                                //DatabaseProvider provider = DatabaseProvider.db;
-                                helper.insertSRHDataToDB(dataVo,false);
-
-                                Navigator.of(context)
-                                    .pushReplacement(MaterialPageRoute(
-                                    builder: (builder) => HomeScreen(
-                                      indexOfTab: 2, selectedSideIndex: 0,
-                                    )));
-                              } catch (e) {
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
+                              if (nameController.text.isEmpty ||
+                                  ageController.text.isEmpty ||
+                                  fpComndityController.text.isEmpty ||
+                                  quantityController.text.isEmpty ||
+                                  findingsController.text.isEmpty ||
+                                  treatmentController.text.isEmpty ||
+                                  channel.isEmpty ||
+                                  clinicTeamController.text.isEmpty) {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(const SnackBar(
                                     content: Center(
-                                      child: Text('Something wrong!!'),
+                                      child: Text('Sorry!! Please input empty fields'),
                                     )));
+                              } else {
+                                var age = int.parse(ageController.text);
+
+                                if (age > 0 && age < 101) {
+                                  SRHVo dataVo = SRHVo(
+                                      tableName: AppConstants.srhTable,
+                                      orgName: PreferenceManager.getString(ORG),
+                                      stateName: PreferenceManager.getString(STATE),
+                                      townshipName:
+                                      PreferenceManager.getString(REGION),
+                                      townshipLocalName:
+                                      PreferenceManager.getString(REGION_LOCAL),
+                                      clinic: clinicTeamController.text,
+                                      channel: channel,
+                                      reportingPeroid: reportingPeriod,
+                                      date: date,
+                                      name: nameController.text,
+                                      age: '${ageController.text}|$ageSymbol',
+                                      sex: sex,
+                                      disability: disability,
+                                      iDP: idp,
+                                      serviceType: serviceType,
+                                      firstReach: firstWeek,
+                                      fpCommodity: fpComndityController.text,
+                                      quantity: quantityController.text,
+                                      fnpDiagnosis: findingsController.text,
+                                      treatment: treatmentController.text,
+                                      attended: attended,
+                                      outcome: outcome,
+                                      remark: remarkController.text,
+                                      createDate: todayDateString,
+                                      updateDate: todayDateString);
+
+                                  try {
+                                    //DatabaseProvider provider = DatabaseProvider.db;
+                                    helper.insertSRHDataToDB(dataVo,false);
+
+                                    Navigator.of(context)
+                                        .pushReplacement(MaterialPageRoute(
+                                        builder: (builder) => HomeScreen(
+                                          indexOfTab: 2, selectedSideIndex: 0,
+                                        )));
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                        content: Center(
+                                          child: Text('Something wrong!!'),
+                                        )));
+                                  }
+                                }else{
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                      content: Center(
+                                        child: Text('Age should be between 1 to 100 years !!!'),
+                                      )));
+                                }
+
+
                               }
-                            }else{
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                  content: Center(
-                                    child: Text('Age should be between 1 to 100 years !!!'),
-                                  )));
-                            }
+                            }),
+                      ],
+                    ),
 
 
-                          }
-                        }),
                   ),
                 ),
               ],
@@ -643,7 +667,29 @@ class _SRHRegisterScreenState extends State<SRHRegisterScreen> {
       ),
     );
   }
+  SizedBox small_inputBox(
+      String title, int maxlines, TextEditingController controller, int limit) {
 
+    return SizedBox(
+      width: 80,
+      height: 50,
+      child: TextField(
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(limit),
+        ],
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          border: const OutlineInputBorder(),
+          labelText: title,
+        ),
+      ),
+    );
+
+
+  }
   Container inputBox(
       String title, int maxlines, TextEditingController controller, int limit) {
     return Container(
@@ -657,7 +703,7 @@ class _SRHRegisterScreenState extends State<SRHRegisterScreen> {
           ]),
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: controller == ageController
+        child: controller == ageController || controller == quantityController
             ? TextField(
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.digitsOnly,

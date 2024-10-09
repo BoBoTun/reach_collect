@@ -36,6 +36,26 @@ class _PreFilledScreenState extends State<PreFilledScreen> {
   String? _selectedItem;
   List<List<dynamic>> _data = [];
   final SQLiteHelper helper = SQLiteHelper();
+
+  List<String> _orgList = [];
+
+  String date = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    DateTime todayDate = DateTime.now();
+
+    date = "${todayDate.toLocal()}".split(' ')[0];
+    PreferenceManager.setString(REPORT_PERIOD, date);
+
+    PreferenceManager.setString(CHANNEL,AppConstants.channelList[0]);
+
+    _orgList = PreferenceManager.getStringList(ORG_LIST) ?? [];
+
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -273,6 +293,8 @@ class _PreFilledScreenState extends State<PreFilledScreen> {
                             )));
                           }else{
 
+                            _orgList.add(orgController.text);
+                            PreferenceManager.setStringList(ORG_LIST, _orgList);
                             PreferenceManager.setString(ORG, orgController.text);
                             PreferenceManager.setString(STATE, _selectedKey ?? "");
                             PreferenceManager.setString(REGION, _selectedItem ?? "");

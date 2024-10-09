@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,6 +9,8 @@ import 'package:reach_collect/network/presistance/database_table.dart';
 import '../network/presistance/SQLiteHelper.dart';
 import '../utils/app_constant.dart';
 import '../utils/app_styles.dart';
+import '../utils/preference_keys.dart';
+import '../utils/share_preference.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/custom_dropdown_widget.dart';
 import '../widgets/date_picker.dart';
@@ -35,7 +40,12 @@ class _ExportState extends State<Export> {
   String? _selectedKey;
   String? _selectedItem;
 
+  String? _selectedKeyTownship;
+  String? _selectedItemTownship;
+
   String date = '';
+
+
 
   final SQLiteHelper helper = SQLiteHelper();
 
@@ -50,23 +60,11 @@ class _ExportState extends State<Export> {
     selectedOrg = orgList[0];
     selectedTownship = townshipList[0];
     selectedClinic = clinicList[0];
-    helper.getColumns(AncRegisterTable.COLUMM_ORG_NAME, AncRegisterTable.TABLE_NAME).then((value) {
 
-      orgList.addAll(value);
+    orgList.addAll(PreferenceManager.getStringList(ORG_LIST) ?? []);
+    clinicList.addAll(AppConstants.clinicList);
 
-    });
-
-    helper.getColumns(AncRegisterTable.COLUMM_TOWNSHIP_NAME, AncRegisterTable.TABLE_NAME).then((value) {
-
-      townshipList.addAll(value);
-
-    });
-
-    helper.getColumns(AncRegisterTable.COLUMM_CLINIC, AncRegisterTable.TABLE_NAME).then((value) {
-
-      clinicList.addAll(value);
-
-    });
+    _removeDuplicates();
 
     DateTime todayDate = DateTime.now();
 
@@ -94,7 +92,7 @@ class _ExportState extends State<Export> {
                 width: 30,
               ),
               const Text(
-                "Consultation Register",
+                "Export",
                 style: AppTheme.navigationTitleStyle,
               ),
             ],
@@ -167,7 +165,7 @@ class _ExportState extends State<Export> {
                                   //icon: Icon(Icons.arrow_drop_down),
                                   iconSize: 30,
                                   elevation: 16,
-                                  hint: Text('Please Select'),
+                                  hint: const Text('Please Select'),
                                   style: const TextStyle(fontSize: 16, color: Colors.black),
                                   underline: Container(
                                   ),
@@ -225,7 +223,7 @@ class _ExportState extends State<Export> {
                               icon: const Icon(Icons.arrow_drop_down),
                               iconSize: 30,
                               elevation: 16,
-                              hint: Text('Please Select'),
+                              hint: const Text('Please Select'),
                               style: const TextStyle(fontSize: 16, color: Colors.black),
                               underline: Container(
                               ),
@@ -292,22 +290,114 @@ class _ExportState extends State<Export> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const  Text(
+                              'State/Region *',
+                              style: TextStyle(
+                                  color: AppTheme.secondaryColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+
+                            Container(
+                              width: 250,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: const [
+                                    BoxShadow(blurRadius: 5.0, spreadRadius: 5.0, color: Colors.black12)
+                                  ]),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                child: DropdownButton<String>(
+                                  isExpanded: true,
+                                  value: _selectedKeyTownship,
+                                  //icon: Icon(Icons.arrow_drop_down),
+                                  iconSize: 30,
+                                  elevation: 16,
+                                  hint: Text('Please Select'),
+                                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                                  underline: Container(
+                                  ),
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      _selectedKeyTownship = newValue;
+                                      _selectedItemTownship = null;
+                                    });
+                                  },
+                                  items: AppConstants.stateAndTownshipList.keys
+                                      .map<DropdownMenuItem<String>>((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    _selectedKeyTownship != null ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
                         const Text(
-                          'Township',
+                          'Township(MIMU) *',
                           style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
+                              color: AppTheme.secondaryColor,
+                              fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        DropdownListView(containerWidth: 250, value: (String value, int index) {
-                          selectedTownship = value;
-                        }, options: townshipList, currentValue: selectedTownship,),
+
+                        Container(
+                          width: 250,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: const [
+                                BoxShadow(blurRadius: 5.0, spreadRadius: 5.0, color: Colors.black12)
+                              ]),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: _selectedItemTownship,
+                              icon: const Icon(Icons.arrow_drop_down),
+                              iconSize: 30,
+                              elevation: 16,
+                              hint: Text('Please Select'),
+                              style: const TextStyle(fontSize: 16, color: Colors.black),
+                              underline: Container(
+                              ),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  _selectedItemTownship = newValue;
+                                });
+                              },
+                              items: AppConstants.stateAndTownshipList[_selectedKeyTownship]!
+                                  .map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+
+
                       ],
-                    ),
+                    ) : Container(),
 
-
-                    SizedBox(width: 200,)
 
                   ],
 
@@ -361,7 +451,7 @@ class _ExportState extends State<Export> {
                     ),
 
 
-                    SizedBox(width: 200,)
+                    const SizedBox(width: 200,)
 
                   ],
 
@@ -400,9 +490,21 @@ class _ExportState extends State<Export> {
       return selectedDirectory;
     }
   }
+
+  // Remove duplicate strings from the list
+  void _removeDuplicates() {
+    setState(() {
+      orgList = orgList.toSet().toList();
+    });
+  }
+
   void _exportCSV(int type) async {
     final filePath = await _pickFolder();
     // Do something with the desktop directory
+    String csvData;
+    List<int> utf8Bom;
+    List<int> encodedData;
+    List<int> finalData;
     if (_selectedItem != null) {
       Map<String, int>? foundIndex = getIndexFromMap(AppConstants.reachCollectList, _selectedItem!);
       print("Index 1: ${foundIndex?.keys.first} Index 2: ${foundIndex?.values.first}");
@@ -422,11 +524,14 @@ class _ExportState extends State<Export> {
 
             //Type ANC
             try {
-              String csvData;
               //String savePath = path;
               helper.getAllANCForExport().then((value) async => {
-                csvData = ListToCsvConverter().convert(value),
-                await file.writeAsString(csvData)
+                csvData = const ListToCsvConverter().convert(value),
+               utf8Bom = [0xEF, 0xBB, 0xBF], // UTF-8 BOM
+               encodedData = utf8.encode(csvData),
+               finalData = utf8Bom + encodedData,
+                await file.writeAsBytes(finalData)//file.writeAsString(encodedData)
+
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Center(
@@ -454,8 +559,11 @@ class _ExportState extends State<Export> {
               String csvData;
               //String savePath = path;
               helper.getAllDeliveryForExport().then((value) async => {
-                csvData = ListToCsvConverter().convert(value),
-                await file.writeAsString(csvData)
+                csvData = const ListToCsvConverter().convert(value),
+                utf8Bom = [0xEF, 0xBB, 0xBF], // UTF-8 BOM
+                encodedData = utf8.encode(csvData),
+                finalData = utf8Bom + encodedData,
+                await file.writeAsBytes(finalData)
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Center(
@@ -484,8 +592,11 @@ class _ExportState extends State<Export> {
               String csvData;
               //String savePath = path;
               helper.getAllSRHForExport().then((value) async => {
-                csvData = ListToCsvConverter().convert(value),
-                await file.writeAsString(csvData)
+                csvData = const ListToCsvConverter().convert(value),
+                utf8Bom = [0xEF, 0xBB, 0xBF], // UTF-8 BOM
+                encodedData = utf8.encode(csvData),
+                finalData = utf8Bom + encodedData,
+                await file.writeAsBytes(finalData)
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Center(
@@ -513,8 +624,11 @@ class _ExportState extends State<Export> {
               String csvData;
               //String savePath = path;
               helper.getAllEPIForExport().then((value) async => {
-                csvData = ListToCsvConverter().convert(value),
-                await file.writeAsString(csvData)
+                csvData = const ListToCsvConverter().convert(value),
+                utf8Bom = [0xEF, 0xBB, 0xBF], // UTF-8 BOM
+                encodedData = utf8.encode(csvData),
+                finalData = utf8Bom + encodedData,
+                await file.writeAsBytes(finalData)
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Center(
@@ -542,8 +656,11 @@ class _ExportState extends State<Export> {
               String csvData;
               //String savePath = path;
               helper.getAllMUACyForExport().then((value) async => {
-                csvData = ListToCsvConverter().convert(value),
-                await file.writeAsString(csvData)
+                csvData = const ListToCsvConverter().convert(value),
+                utf8Bom = [0xEF, 0xBB, 0xBF], // UTF-8 BOM
+                encodedData = utf8.encode(csvData),
+                finalData = utf8Bom + encodedData,
+                await file.writeAsBytes(finalData)
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Center(
@@ -571,8 +688,11 @@ class _ExportState extends State<Export> {
               String csvData;
               //String savePath = path;
               helper.getAllPNUForExport().then((value) async => {
-                csvData = ListToCsvConverter().convert(value),
-                await file.writeAsString(csvData)
+                csvData = const ListToCsvConverter().convert(value),
+                utf8Bom = [0xEF, 0xBB, 0xBF], // UTF-8 BOM
+                encodedData = utf8.encode(csvData),
+                finalData = utf8Bom + encodedData,
+                await file.writeAsBytes(finalData)
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Center(
@@ -602,8 +722,11 @@ class _ExportState extends State<Export> {
               String csvData;
               //String savePath = path;
               helper.getAllConsultationForExport().then((value) async => {
-                csvData = ListToCsvConverter().convert(value),
-                await file.writeAsString(csvData)
+                csvData = const ListToCsvConverter().convert(value),
+                utf8Bom = [0xEF, 0xBB, 0xBF], // UTF-8 BOM
+                encodedData = utf8.encode(csvData),
+                finalData = utf8Bom + encodedData,
+                await file.writeAsBytes(finalData)
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Center(
@@ -630,8 +753,11 @@ class _ExportState extends State<Export> {
               String csvData;
               //String savePath = path;
               helper.getAllDistributionForExport().then((value) async => {
-                csvData = ListToCsvConverter().convert(value),
-                await file.writeAsString(csvData)
+                csvData = const ListToCsvConverter().convert(value),
+                utf8Bom = [0xEF, 0xBB, 0xBF], // UTF-8 BOM
+                encodedData = utf8.encode(csvData),
+                finalData = utf8Bom + encodedData,
+                await file.writeAsBytes(finalData)
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Center(
@@ -658,8 +784,11 @@ class _ExportState extends State<Export> {
               String csvData;
               //String savePath = path;
               helper.getAllHEForExport().then((value) async => {
-                csvData = ListToCsvConverter().convert(value),
-                await file.writeAsString(csvData)
+                csvData = const ListToCsvConverter().convert(value),
+                utf8Bom = [0xEF, 0xBB, 0xBF], // UTF-8 BOM
+                encodedData = utf8.encode(csvData),
+                finalData = utf8Bom + encodedData,
+                await file.writeAsBytes(finalData)
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Center(
@@ -686,8 +815,11 @@ class _ExportState extends State<Export> {
               String csvData;
               //String savePath = path;
               helper.getAllReferralForExport().then((value) async => {
-                csvData = ListToCsvConverter().convert(value),
-                await file.writeAsString(csvData)
+                csvData = const ListToCsvConverter().convert(value),
+                utf8Bom = [0xEF, 0xBB, 0xBF], // UTF-8 BOM
+                encodedData = utf8.encode(csvData),
+                finalData = utf8Bom + encodedData,
+                await file.writeAsBytes(finalData)
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Center(

@@ -14,6 +14,7 @@ import 'package:reach_collect/utils/share_preference.dart';
 import 'package:reach_collect/widgets/button_widget.dart';
 import 'package:reach_collect/widgets/custom_dropdown_widget.dart';
 import 'package:reach_collect/widgets/date_picker.dart';
+import 'package:reach_collect/widgets/multi_radio.dart';
 import 'package:reach_collect/widgets/radio_button.dart';
 import 'package:reach_collect/widgets/radio_button_live_birth.dart';
 
@@ -31,17 +32,18 @@ class _DeliveryRegisterScreenState extends State<DeliveryRegisterScreen> {
   final SQLiteHelper helper = SQLiteHelper();
   //data var
   String date = '';
-  String disability = 'true';
-  String idp = 'true';
+  String disability = '';
+  String idp = '';
   String attendedby = '';
   String outcome = '';
   String reportingPeriod = '';
   String channel = '';
-  String tdComplete = 'true';
+  String tdComplete = 'Yes';
   String liveOrstill = 'Live birth';
-  String neonatalRecursion = 'true';
-  String breadFeeding = 'true';
+  String neonatalRecursion = 'Yes';
+  String breadFeeding = 'Yes';
   String todayDateString = '';
+  String ageSymbol = '';
 
   TextEditingController nameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
@@ -69,6 +71,7 @@ class _DeliveryRegisterScreenState extends State<DeliveryRegisterScreen> {
     outcome = AppConstants.outcomeList[0];
 
     todayDateString = DateFormat('yyyy-MM-dd - kk-mm-ss').format(todayDate);
+    ageSymbol = 'Years';
   }
 
   @override
@@ -235,7 +238,7 @@ class _DeliveryRegisterScreenState extends State<DeliveryRegisterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Name',
+                          'Name *',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -251,14 +254,20 @@ class _DeliveryRegisterScreenState extends State<DeliveryRegisterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Age (number only)',
+                          'Age *',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Age (number only)', 1, ageController,3),
+                        Row(
+                          children: [
+                            small_inputBox('Age', 1, ageController, 3),
+                            SizedBox(width: 20,),
+                            DropdownListView(containerWidth: 160, value: (String value, int index) { ageSymbol = value; }, options: ['Years','Months'], currentValue: ageSymbol,),
+                          ],
+                        )
                       ],
                     )
                   ],
@@ -286,7 +295,7 @@ class _DeliveryRegisterScreenState extends State<DeliveryRegisterScreen> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: HorizontalRadioButton(
+                              child: MultiRadio(
                                 radioValue: (String value) {
                                   disability = value;
                                 },
@@ -312,7 +321,7 @@ class _DeliveryRegisterScreenState extends State<DeliveryRegisterScreen> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: HorizontalRadioButton(
+                              child: MultiRadio(
                                 radioValue: (String value) {
                                   idp = value;
                                 },
@@ -429,14 +438,14 @@ class _DeliveryRegisterScreenState extends State<DeliveryRegisterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Birth Weight',
+                          'Birth Weight (Kg)',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Birth Weight', 1, birthWeightController,10),
+                        inputBox('Birth Weight (Kg)', 1, birthWeightController,3),
                       ],
                     ),
                     SizedBox(
@@ -592,80 +601,109 @@ class _DeliveryRegisterScreenState extends State<DeliveryRegisterScreen> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
-                          if (nameController.text.isEmpty ||
-                              ageController.text.isEmpty ||
-                              clinicTeamController.text.isEmpty ||
-                              gestationalWeekController.text.isEmpty ||
-                              gravidaController.text.isEmpty ||
-                              birthWeightController.text.isEmpty ||
-                              treatmentController.text.isEmpty ||
-                              channel.isEmpty) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
+                              if (nameController.text.isEmpty ||
+                                  ageController.text.isEmpty ||
+                                  clinicTeamController.text.isEmpty ||
+                                  gestationalWeekController.text.isEmpty ||
+                                  gravidaController.text.isEmpty ||
+                                  birthWeightController.text.isEmpty ||
+                                  treatmentController.text.isEmpty ||
+                                  channel.isEmpty) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
                                     content: Center(
-                              child: Text('Sorry!! Please input empty fields'),
-                            )));
-                          } else {
+                                      child: Text('Sorry!! Please input empty fields'),
+                                    )));
+                              }
+                              else {
 
-                            var age = int.parse(ageController.text);
-                            var gestation = int.parse(gestationalWeekController.text);
-                            var gravida = int.parse(gravidaController.text);
-                            var birthWeight = double.parse(birthWeightController.text);
+                                var age = int.parse(ageController.text);
+                                var gestation = int.parse(gestationalWeekController.text);
+                                var gravida = int.parse(gravidaController.text);
+                                var birthWeight = double.parse(birthWeightController.text);
 
-                            if (age > 0 && age < 101){
-                              if (gestation > 0 && gestation < 43){
-                                if (gravida > 0 && gravida < 21){
-                                  if (birthWeight > 0.0 && birthWeight < 15.0){
+                                if (age > 0 && age < 101){
+                                  if (gestation > 0 && gestation < 43){
+                                    if (gravida > 0 && gravida < 21){
+                                      if (birthWeight > 0.0 && birthWeight < 15.0){
 
-                                    DeliveryVo dataVo = DeliveryVo(
-                                      tableName: AppConstants.deliveryTable,
-                                        orgName: PreferenceManager.getString(ORG),
-                                        stateName: PreferenceManager.getString(STATE),
-                                        townshipName:
-                                        PreferenceManager.getString(REGION),
-                                        townshipLocalName:
-                                        PreferenceManager.getString(REGION_LOCAL),
-                                        clinic: clinicTeamController.text,
-                                        channel: channel,
-                                        reportingPeroid: reportingPeriod,
-                                        date: date,
-                                        name: nameController.text,
-                                        age: ageController.text,
-                                        disability: disability,
-                                        iDP: idp,
-                                        gestational: gestationalWeekController.text,
-                                        gravida: gravidaController.text,
-                                        tDComplete: tdComplete,
-                                        birthType: liveOrstill,
-                                        birthWeight: birthWeightController.text,
-                                        neonatal: neonatalRecursion,
-                                        breastfeeding: breadFeeding,
-                                        treatment: treatmentController.text,
-                                        attended: attendedby,
-                                        outcome: outcome,
-                                        remark: remarkController.text,
-                                        createDate: todayDateString,
-                                        updateDate: todayDateString
-                                    );
+                                        DeliveryVo dataVo = DeliveryVo(
+                                            tableName: AppConstants.deliveryTable,
+                                            orgName: PreferenceManager.getString(ORG),
+                                            stateName: PreferenceManager.getString(STATE),
+                                            townshipName:
+                                            PreferenceManager.getString(REGION),
+                                            townshipLocalName:
+                                            PreferenceManager.getString(REGION_LOCAL),
+                                            clinic: clinicTeamController.text,
+                                            channel: channel,
+                                            reportingPeroid: reportingPeriod,
+                                            date: date,
+                                            name: nameController.text,
+                                            age: '${ageController.text}|$ageSymbol',
+                                            disability: disability,
+                                            iDP: idp,
+                                            gestational: gestationalWeekController.text,
+                                            gravida: gravidaController.text,
+                                            tDComplete: tdComplete,
+                                            birthType: liveOrstill,
+                                            birthWeight: birthWeightController.text,
+                                            neonatal: neonatalRecursion,
+                                            breastfeeding: breadFeeding,
+                                            treatment: treatmentController.text,
+                                            attended: attendedby,
+                                            outcome: outcome,
+                                            remark: remarkController.text,
+                                            createDate: todayDateString,
+                                            updateDate: todayDateString
+                                        );
 
-                                    try {
-                                      // DatabaseProvider provider = DatabaseProvider.db;
-                                      helper.insertDeliveryDataToDB(dataVo,false);
+                                        try {
+                                          // DatabaseProvider provider = DatabaseProvider.db;
+                                          helper.insertDeliveryDataToDB(dataVo,false);
 
-                                      Navigator.of(context)
-                                          .pushReplacement(MaterialPageRoute(
-                                          builder: (builder) => HomeScreen(
-                                            indexOfTab: 1, selectedSideIndex: 0,
-                                          )));
-                                    } catch (e) {
+                                          Navigator.of(context)
+                                              .pushReplacement(MaterialPageRoute(
+                                              builder: (builder) => HomeScreen(
+                                                indexOfTab: 1, selectedSideIndex: 0,
+                                              )));
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                              content: Center(
+                                                child: Text('Something wrong!!'),
+                                              )));
+                                        }
+
+                                      }else{
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                            content: Center(
+                                              child: Text('Birth Weight should be 1 to 14 !!!'),
+                                            )));
+                                      }
+
+                                    }else{
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(const SnackBar(
                                           content: Center(
-                                            child: Text('Something wrong!!'),
+                                            child: Text('Gravida should be 1 to 20 !!!'),
                                           )));
                                     }
 
@@ -673,7 +711,7 @@ class _DeliveryRegisterScreenState extends State<DeliveryRegisterScreen> {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
                                         content: Center(
-                                          child: Text('Birth Weight should be 1 to 14 !!!'),
+                                          child: Text('Gestational Week should be 1 to 42 weeks !!!'),
                                         )));
                                   }
 
@@ -681,29 +719,17 @@ class _DeliveryRegisterScreenState extends State<DeliveryRegisterScreen> {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(const SnackBar(
                                       content: Center(
-                                        child: Text('Gravida should be 1 to 20 !!!'),
+                                        child: Text('Age should be between 1 to 100 years !!!'),
                                       )));
                                 }
 
-                              }else{
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                    content: Center(
-                                      child: Text('Gestational Week should be 1 to 42 weeks !!!'),
-                                    )));
+
                               }
-
-                            }else{
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                  content: Center(
-                                    child: Text('Age should be between 1 to 100 years !!!'),
-                                  )));
-                            }
+                            }),
+                      ],
+                    ),
 
 
-                          }
-                        }),
                   ),
                 ),
               ],
@@ -713,7 +739,29 @@ class _DeliveryRegisterScreenState extends State<DeliveryRegisterScreen> {
       ),
     );
   }
+  SizedBox small_inputBox(
+      String title, int maxlines, TextEditingController controller, int limit) {
 
+    return SizedBox(
+      width: 80,
+      height: 50,
+      child: TextField(
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(limit),
+        ],
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          border: const OutlineInputBorder(),
+          labelText: title,
+        ),
+      ),
+    );
+
+
+  }
   Container inputBox(
       String title, int maxlines, TextEditingController controller, int limit) {
     return Container(

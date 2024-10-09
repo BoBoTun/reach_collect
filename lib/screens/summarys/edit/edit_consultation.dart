@@ -849,58 +849,73 @@ class _EditConsultationState extends State<EditConsultation> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
 
-                          //Add To DB
-                          ConsultationVo dataVo = ConsultationVo(
-                            id: widget.reachCollectVo.id,
-                              tableName : AppConstants.consultationTable,
-                              orgName: PreferenceManager.getString(ORG),
-                              stateName: PreferenceManager.getString(STATE),
-                              townshipName: PreferenceManager.getString(REGION),
-                              townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
-                              clinic: clinicTeamController.text,
-                              channel: channel,
-                              reportingPeroid: reportingPeriod,
-                              date: date,
-                              trauma: "${trumaOneM.text}|${trumaOneF.text}||"
-                                  "${trumaTwoM.text}|${trumaTwoF.text}||"
-                                  "${trumaThreeM.text}|${trumaThreeF.text}||"
-                                  "${trumaFourM.text}|${trumaFourF.text}",
-                              consultations: "${otherOneM.text}|${otherOneF.text}||"
-                                  "${otherTwoM.text}|${otherTwoF.text}||"
-                                  "${otherThreeM.text}|${otherThreeF.text}||"
-                                  "${otherFourM.text}|${otherFourF.text}",
-                              pneumonia: "${pneumoniaM.text}|${pneumoniaF.text}",
-                              diarrhoea: "${diarrhoeaM.text}|${diarrhoeaF.text}",
-                              iDP: "${idpM.text}|${idpF.text}",
-                              disability: "${disabilityM.text}|${disabilityF.text}",
-                              remark: remarkController.text,
-                              createDate: widget.reachCollectVo.createDate,
-                              updateDate: todayDateString
-                          );
+                              //Add To DB
+                              ConsultationVo dataVo = ConsultationVo(
+                                  id: widget.reachCollectVo.id,
+                                  tableName : AppConstants.consultationTable,
+                                  orgName: PreferenceManager.getString(ORG),
+                                  stateName: PreferenceManager.getString(STATE),
+                                  townshipName: PreferenceManager.getString(REGION),
+                                  townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
+                                  clinic: clinicTeamController.text,
+                                  channel: channel,
+                                  reportingPeroid: reportingPeriod,
+                                  date: date,
+                                  trauma: "${trumaOneM.text}|${trumaOneF.text}||"
+                                      "${trumaTwoM.text}|${trumaTwoF.text}||"
+                                      "${trumaThreeM.text}|${trumaThreeF.text}||"
+                                      "${trumaFourM.text}|${trumaFourF.text}",
+                                  consultations: "${otherOneM.text}|${otherOneF.text}||"
+                                      "${otherTwoM.text}|${otherTwoF.text}||"
+                                      "${otherThreeM.text}|${otherThreeF.text}||"
+                                      "${otherFourM.text}|${otherFourF.text}",
+                                  pneumonia: "${pneumoniaM.text}|${pneumoniaF.text}",
+                                  diarrhoea: "${diarrhoeaM.text}|${diarrhoeaF.text}",
+                                  iDP: "${idpM.text}|${idpF.text}",
+                                  disability: "${disabilityM.text}|${disabilityF.text}",
+                                  remark: remarkController.text,
+                                  createDate: widget.reachCollectVo.createDate,
+                                  updateDate: todayDateString
+                              );
 
-                          try {
+                              try {
 
-                            helper.updateConsultationInto(dataVo);
+                                helper.updateConsultationInto(dataVo);
 
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (builder) =>
-                                        HomeScreen(indexOfTab: 0, selectedSideIndex: 2,)));
-                          } catch (e) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                                content: Center(
-                                  child: Text('Something wrong!!'),
-                                )));
-                          }
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (builder) =>
+                                            HomeScreen(indexOfTab: 0, selectedSideIndex: 2,)));
+                              } catch (e) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                    content: Center(
+                                      child: Text('Something wrong!!'),
+                                    )));
+                              }
 
-                          //End add to DB
-                        }),
+                              //End add to DB
+                            }),
+                      ],
+                    ),
+
                   ),
                 ),
               ],

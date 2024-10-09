@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:reach_collect/data/model/srh_model.dart';
+import 'package:reach_collect/widgets/multi_radio.dart';
 
 import '../../../network/presistance/SQLiteHelper.dart';
 import '../../../utils/app_constant.dart';
@@ -10,6 +11,7 @@ import '../../../utils/app_styles.dart';
 import '../../../widgets/button_widget.dart';
 import '../../../widgets/custom_dropdown_widget.dart';
 import '../../../widgets/date_picker.dart';
+import '../../../widgets/double_radio.dart';
 import '../../../widgets/male_female_radio.dart';
 import '../../../widgets/month_picker.dart';
 import '../../../widgets/radio_button.dart';
@@ -43,16 +45,17 @@ class _EditSRHState extends State<EditSRH> {
   TextEditingController clinicTeamController = TextEditingController();
 
   String date = '';
-  String disability = 'true';
-  String idp = 'true';
+  String disability = '';
+  String idp = '';
   String attended = '';
   String outcome = '';
   String clinicTeam = '';
   String tdSelectString = '1St';
   String tdSelectedDate = '';
-  String sex = 'Male';
-  String firstWeek = 'true';
+  String sex = '';
+  String firstWeek = 'Yes';
   String serviceType = '';
+  String ageSymbol = '';
 
   TextEditingController nameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
@@ -82,7 +85,6 @@ class _EditSRHState extends State<EditSRH> {
 
     date = widget.srhVo.date ?? '';
     nameController.text = widget.srhVo.name ?? '';
-    ageController.text = widget.srhVo.age ?? '';
     sex = widget.srhVo.sex ?? '';
     disability = widget.srhVo.disability ?? '';
     idp = widget.srhVo.iDP ?? '';
@@ -95,6 +97,10 @@ class _EditSRHState extends State<EditSRH> {
     attended = widget.srhVo.attended ?? '';
     outcome = widget.srhVo.outcome ?? '';
     remarkController.text = widget.srhVo.remark ?? '';
+
+    List ageList = (widget.srhVo.age ?? '').split('|');
+    ageController.text = ageList[0];
+    ageSymbol = ageList[1];
 
   }
 
@@ -248,17 +254,6 @@ class _EditSRHState extends State<EditSRH> {
                                 ),
                               ),
                             ),
-
-/*
-                      DropdownListView(containerWidth: 200, value: (String value, int index) {
-                        setState(() {
-                          print("Selected Index :: $index");
-                          //selectedStateId = index ;
-                          townshipList = AppConstants.townshipList[index];
-                          selectedState = value;
-                        });
-                       }, options: stateList,),
-                    */
                           ],
                         ),
                       ],
@@ -473,14 +468,20 @@ class _EditSRHState extends State<EditSRH> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Age (number only)',
+                          'Age',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Age (number only)', 1, ageController,3),
+                        Row(
+                          children: [
+                            small_inputBox('Age', 1, ageController, 3),
+                            SizedBox(width: 20,),
+                            DropdownListView(containerWidth: 160, value: (String value, int index) { ageSymbol = value; }, options: ['Years','Months'], currentValue: ageSymbol,),
+                          ],
+                        )
                       ],
                     )
                   ],
@@ -508,12 +509,10 @@ class _EditSRHState extends State<EditSRH> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: SexRadioButton(
-                                radioValue: (String value) {
-                                  sex = value;
-                                },
-                                activeValue: sex,
-                              )),
+                              child: DoubleRadio(radioValue: (String value) {
+                                sex = value;
+                              }, activeValue: sex, radioList: ['Male','Female'],)
+                          ),
                         ],
                       ),
                     ),
@@ -533,7 +532,7 @@ class _EditSRHState extends State<EditSRH> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: HorizontalRadioButton(
+                              child: MultiRadio(
                                 radioValue: (String value) {
                                   disability = value;
                                 },
@@ -558,7 +557,7 @@ class _EditSRHState extends State<EditSRH> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: HorizontalRadioButton(
+                              child: MultiRadio(
                                 radioValue: (String value) {
                                   idp = value;
                                 },
@@ -776,82 +775,97 @@ class _EditSRHState extends State<EditSRH> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
-                          if (nameController.text.isEmpty ||
-                              ageController.text.isEmpty ||
-                              fpComndityController.text.isEmpty ||
-                              quantityController.text.isEmpty ||
-                              findingsController.text.isEmpty ||
-                              treatmentController.text.isEmpty ||
-                              channel.isEmpty ||
-                              clinicTeamController.text.isEmpty) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                                content: Center(
-                                  child: Text('Sorry!! Please input empty fields'),
-                                )));
-                          } else {
-                            var age = int.parse(ageController.text);
-
-                            if (age > 0 && age < 101) {
-                              SRHVo dataVo = SRHVo(
-                                  id: widget.srhVo.id,
-                                  tableName: AppConstants.srhTable,
-                                  orgName: orgController.text,
-                                  stateName: _selectedKey,
-                                  townshipName: _selectedItem,
-                                  townshipLocalName: townshipLocalController.text,
-                                  clinic: clinicTeamController.text,
-                                  channel: channel,
-                                  reportingPeroid: reportingPeriod,
-                                  date: date,
-                                  name: nameController.text,
-                                  age: ageController.text,
-                                  sex: sex,
-                                  disability: disability,
-                                  iDP: idp,
-                                  serviceType: serviceType,
-                                  firstReach: firstWeek,
-                                  fpCommodity: fpComndityController.text,
-                                  quantity: quantityController.text,
-                                  fnpDiagnosis: findingsController.text,
-                                  treatment: treatmentController.text,
-                                  attended: attended,
-                                  outcome: outcome,
-                                  remark: remarkController.text,
-                                  createDate: createDate,
-                                  updateDate: todayDateString);
-
-                              try {
-                                //DatabaseProvider provider = DatabaseProvider.db;
-                                helper.updateSRHInto(dataVo);
-
-                                Navigator.of(context)
-                                    .pushReplacement(MaterialPageRoute(
-                                    builder: (builder) => HomeScreen(
-                                      indexOfTab: 2, selectedSideIndex: 0,
-                                    )));
-                              } catch (e) {
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
+                              if (nameController.text.isEmpty ||
+                                  ageController.text.isEmpty ||
+                                  fpComndityController.text.isEmpty ||
+                                  quantityController.text.isEmpty ||
+                                  findingsController.text.isEmpty ||
+                                  treatmentController.text.isEmpty ||
+                                  channel.isEmpty ||
+                                  clinicTeamController.text.isEmpty) {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(const SnackBar(
                                     content: Center(
-                                      child: Text('Something wrong!!'),
+                                      child: Text('Sorry!! Please input empty fields'),
                                     )));
+                              } else {
+                                var age = int.parse(ageController.text);
+
+                                if (age > 0 && age < 101) {
+                                  SRHVo dataVo = SRHVo(
+                                      id: widget.srhVo.id,
+                                      tableName: AppConstants.srhTable,
+                                      orgName: orgController.text,
+                                      stateName: _selectedKey,
+                                      townshipName: _selectedItem,
+                                      townshipLocalName: townshipLocalController.text,
+                                      clinic: clinicTeamController.text,
+                                      channel: channel,
+                                      reportingPeroid: reportingPeriod,
+                                      date: date,
+                                      name: nameController.text,
+                                      age: '${ageController.text}|$ageSymbol',
+                                      sex: sex,
+                                      disability: disability,
+                                      iDP: idp,
+                                      serviceType: serviceType,
+                                      firstReach: firstWeek,
+                                      fpCommodity: fpComndityController.text,
+                                      quantity: quantityController.text,
+                                      fnpDiagnosis: findingsController.text,
+                                      treatment: treatmentController.text,
+                                      attended: attended,
+                                      outcome: outcome,
+                                      remark: remarkController.text,
+                                      createDate: createDate,
+                                      updateDate: todayDateString);
+
+                                  try {
+                                    //DatabaseProvider provider = DatabaseProvider.db;
+                                    helper.updateSRHInto(dataVo);
+
+                                    Navigator.of(context)
+                                        .pushReplacement(MaterialPageRoute(
+                                        builder: (builder) => HomeScreen(
+                                          indexOfTab: 2, selectedSideIndex: 0,
+                                        )));
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                        content: Center(
+                                          child: Text('Something wrong!!'),
+                                        )));
+                                  }
+                                }else{
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                      content: Center(
+                                        child: Text('Age should be between 1 to 100 years !!!'),
+                                      )));
+                                }
+
+
                               }
-                            }else{
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                  content: Center(
-                                    child: Text('Age should be between 1 to 100 years !!!'),
-                                  )));
-                            }
+                            }),
+                      ],
+                    ),
 
-
-                          }
-                        }),
                   ),
                 ),
               ],
@@ -861,7 +875,29 @@ class _EditSRHState extends State<EditSRH> {
       ),
     );
   }
+  SizedBox small_inputBox(
+      String title, int maxlines, TextEditingController controller, int limit) {
 
+    return SizedBox(
+      width: 80,
+      height: 50,
+      child: TextField(
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(limit),
+        ],
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          border: const OutlineInputBorder(),
+          labelText: title,
+        ),
+      ),
+    );
+
+
+  }
   Container inputBox(
       String title, int maxlines, TextEditingController controller, int limit) {
     return Container(
@@ -875,7 +911,7 @@ class _EditSRHState extends State<EditSRH> {
           ]),
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: controller == ageController
+        child: controller == ageController || controller == quantityController
             ? TextField(
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly,

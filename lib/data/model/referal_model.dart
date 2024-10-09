@@ -7,6 +7,7 @@ class ReferalVo {
   String? townshipName;
   String? townshipLocalName;
   String? clinic;
+  String? reportingPeroid;
   String? villageName;
   String? date;
   String? name;
@@ -31,6 +32,7 @@ class ReferalVo {
     this.townshipName,
     this.townshipLocalName,
     this.clinic,
+    this.reportingPeroid,
     this.villageName,
     this.date,
     this.name,
@@ -57,6 +59,7 @@ class ReferalVo {
       ReferralTable.COLUMM_TOWNSHIP_NAME: townshipName,
       ReferralTable.COLUMM_TOWNSHIP_LOCAL_NAME: townshipLocalName,
       ReferralTable.COLUMM_CLINIC:clinic,
+      ReferralTable.COLUMM_REPORTING_PERIOD: reportingPeroid,
       ReferralTable.COLUMM_Village_Name: villageName,
       ReferralTable.COLUMN_NAME_Date: date,
       ReferralTable.COLUMN_NAME_Name: name,

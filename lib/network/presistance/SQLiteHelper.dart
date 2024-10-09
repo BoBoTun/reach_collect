@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:reach_collect/data/model/consultation_model.dart';
 import 'package:reach_collect/data/model/distribution_model.dart';
+import 'package:reach_collect/data/model/follow_up_model.dart';
 import 'package:reach_collect/data/model/he_model.dart';
 import 'package:reach_collect/data/model/muac_model.dart';
+import 'package:reach_collect/data/model/tb_followup_model.dart';
 import 'package:reach_collect/screens/consultation/epi_register.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
@@ -44,6 +46,7 @@ class SQLiteHelper {
       "${AncRegisterTable.COLUMN_NAME_Gestational}$TEXT_TYPE,"
       "${AncRegisterTable.COLUMN_NAME_Gravida}$TEXT_TYPE,"
       "${AncRegisterTable.COLUMN_NAME_Parity}$TEXT_TYPE,"
+      "${AncRegisterTable.COLUMN_NAME_NoOfANC}$TEXT_TYPE,"
       "${AncRegisterTable.COLUMN_NAME_Td}$TEXT_TYPE,"
       "${AncRegisterTable.COLUMN_NAME_Findings}$TEXT_TYPE,"
       "${AncRegisterTable.COLUMN_NAME_Treatment}$TEXT_TYPE,"
@@ -128,6 +131,10 @@ class SQLiteHelper {
       "${EPITable.COLUMN_NAME_Address}$TEXT_TYPE,"
       "${EPITable.COLUMN_NAME_DOB}$TEXT_TYPE,"
       "${EPITable.COLUMN_NAME_BCG}$TEXT_TYPE,"
+      "${EPITable.COLUMN_NAME_OPV}$TEXT_TYPE,"
+      "${EPITable.COLUMN_NAME_PENTA}$TEXT_TYPE,"
+      "${EPITable.COLUMN_NAME_MMR}$TEXT_TYPE,"
+      "${EPITable.COLUMN_NAME_JE}$TEXT_TYPE,"
       "${EPITable.COLUMN_NAME_Vaccined}$TEXT_TYPE,"
       "${EPITable.COLUMN_NAME_Refer}$TEXT_TYPE,"
       "${EPITable.COLUMN_NAME_ReferPlace}$TEXT_TYPE,"
@@ -143,6 +150,7 @@ class SQLiteHelper {
       "${MUACTable.COLUMM_TOWNSHIP_NAME}$TEXT_TYPE,"
       "${MUACTable.COLUMM_TOWNSHIP_LOCAL_NAME}$TEXT_TYPE,"
       "${MUACTable.COLUMM_CLINIC}$TEXT_TYPE,"
+      "${MUACTable.COLUMM_REPORTING_PERIOD}$TEXT_TYPE,"
       "${MUACTable.COLUMM_VILLAGE_NAME}$TEXT_TYPE,"
       "${MUACTable.COLUMM_VOLUNTEER_NAME}$TEXT_TYPE,"
       "${MUACTable.COLUMN_NAME_Date}$TEXT_TYPE,"
@@ -243,6 +251,7 @@ class SQLiteHelper {
       "${HETable.COLUMM_STATE_NAME}$TEXT_TYPE,"
       "${HETable.COLUMM_TOWNSHIP_NAME}$TEXT_TYPE,"
       "${HETable.COLUMM_TOWNSHIP_LOCAL_NAME}$TEXT_TYPE,"
+      "${HETable.COLUMM_REPORTING_PERIOD}$TEXT_TYPE,"
       "${HETable.COLUMM_Village_Name}$TEXT_TYPE,"
   "${HETable.COLUMM_NAME_Topic}$TEXT_TYPE,"
   "${HETable.COLUMN_NAME_Date}$TEXT_TYPE,"
@@ -259,13 +268,15 @@ class SQLiteHelper {
       "${DistributionTable.COLUMN_UPDATE_DATE}$TEXT_TYPE)";
 
   static const String SQL_CREATE_Referral_TABLE =
-      "CREATE TABLE ${ReferralTable.TABLE_NAME} (${ReferralTable.COLUMM_Id} $INTEGER_AUTO_INCREMENT,"
+      "CREATE TABLE ${ReferralTable.TABLE_NAME}"
+      " (${ReferralTable.COLUMM_Id} $INTEGER_AUTO_INCREMENT,"
       "${ReferralTable.COLUMM_TABLE}$TEXT_TYPE,"
       "${ReferralTable.COLUMM_ORG_NAME}$TEXT_TYPE,"
       "${ReferralTable.COLUMM_STATE_NAME}$TEXT_TYPE,"
       "${ReferralTable.COLUMM_TOWNSHIP_NAME}$TEXT_TYPE,"
       "${ReferralTable.COLUMM_TOWNSHIP_LOCAL_NAME}$TEXT_TYPE,"
       "${ReferralTable.COLUMM_CLINIC}$TEXT_TYPE,"
+      "${ReferralTable.COLUMM_REPORTING_PERIOD}$TEXT_TYPE,"
       "${ReferralTable.COLUMM_Village_Name}$TEXT_TYPE,"
       "${ReferralTable.COLUMN_NAME_Date}$TEXT_TYPE,"
       "${ReferralTable.COLUMN_NAME_Name}$TEXT_TYPE,"
@@ -282,6 +293,28 @@ class SQLiteHelper {
       "${DistributionTable.COLUMN_CREATE_DATE}$TEXT_TYPE,"
       "${DistributionTable.COLUMN_UPDATE_DATE}$TEXT_TYPE)";
 
+  static const String SQL_CREATE_FOLLOWUP_TABLE =
+      "CREATE TABLE ${FollowUpTable.TABLE_NAME} "
+      "(${FollowUpTable.COLUMM_Id} $INTEGER_AUTO_INCREMENT,"
+      "${FollowUpTable.COLUMM_ART_Id}$TEXT_TYPE,"
+      "${FollowUpTable.COLUMM_DATE}$TEXT_TYPE,"
+      "${FollowUpTable.COLUMM_OUTCOME}$TEXT_TYPE,"
+      "${FollowUpTable.COLUMM_TB_STATUS}$TEXT_TYPE,"
+      "${FollowUpTable.COLUMM_ADHERENCE}$TEXT_TYPE,"
+      "${FollowUpTable.COLUMM_VIRAL_LOAD}$TEXT_TYPE,"
+      "${FollowUpTable.COLUMM_NEXT_VISIT}$TEXT_TYPE)";
+
+  static const String SQL_CREATE_TBFOLLOWUP_TABLE =
+      "CREATE TABLE ${TBFollowUpTable.TABLE_NAME} "
+      "(${TBFollowUpTable.COLUMM_Id} $INTEGER_AUTO_INCREMENT,"
+      "${TBFollowUpTable.COLUMM_TB_Id}$TEXT_TYPE,"
+      "${TBFollowUpTable.COLUMM_DATE}$TEXT_TYPE,"
+      "${TBFollowUpTable.COLUMM_S}$TEXT_TYPE,"
+      "${TBFollowUpTable.COLUMM_X}$TEXT_TYPE,"
+      "${TBFollowUpTable.COLUMM_T}$TEXT_TYPE,"
+      "${TBFollowUpTable.COLUMM_LABNO}$TEXT_TYPE,"
+      "${TBFollowUpTable.COLUMM_REMARK}$TEXT_TYPE)";
+
   Database? _database;
   Future<Database> get database async {
     if (_database != null) {
@@ -297,7 +330,7 @@ class SQLiteHelper {
       sqfliteFfiInit();
       final databaseFactory = databaseFactoryFfi;
       final appDocumentsDir = await getApplicationDocumentsDirectory();
-      final dbPath = join(appDocumentsDir.path, "rcv1", "rcb.db");
+      final dbPath = join(appDocumentsDir.path, "rcv", "rcb.db");
       //databaseFactory.deleteDatabase(dbPath);
       final winLinuxDB = await databaseFactory.openDatabase(
         dbPath,
@@ -333,6 +366,8 @@ class SQLiteHelper {
     await db.execute(SQL_CREATE_Distribution_TABLE);
     await db.execute(SQL_CREATE_HE_TABLE);
     await db.execute(SQL_CREATE_Referral_TABLE);
+    await db.execute(SQL_CREATE_FOLLOWUP_TABLE);
+    await db.execute(SQL_CREATE_TBFOLLOWUP_TABLE);
 
   }
 
@@ -359,6 +394,7 @@ class SQLiteHelper {
       AncRegisterTable.COLUMN_NAME_Gestational: acnVo.gestational,
       AncRegisterTable.COLUMN_NAME_Gravida: acnVo.gravida,
       AncRegisterTable.COLUMN_NAME_Parity: acnVo.parity,
+      AncRegisterTable.COLUMN_NAME_NoOfANC: acnVo.noOfANC,
       AncRegisterTable.COLUMN_NAME_Findings: acnVo.findings,
       AncRegisterTable.COLUMN_NAME_Td: acnVo.td,
       AncRegisterTable.COLUMN_NAME_Treatment: acnVo.treatment,
@@ -534,6 +570,7 @@ class SQLiteHelper {
           reachCollect[AncRegisterTable.COLUMN_NAME_Gestational];
       ancVo.gravida = reachCollect[AncRegisterTable.COLUMN_NAME_Gravida];
       ancVo.parity = reachCollect[AncRegisterTable.COLUMN_NAME_Parity];
+      ancVo.noOfANC = reachCollect[AncRegisterTable.COLUMN_NAME_NoOfANC];
       ancVo.td = reachCollect[AncRegisterTable.COLUMN_NAME_Td];
       ancVo.findings = reachCollect[AncRegisterTable.COLUMN_NAME_Findings];
       ancVo.treatment = reachCollect[AncRegisterTable.COLUMN_NAME_Treatment];
@@ -654,6 +691,7 @@ class SQLiteHelper {
       (AncRegisterTable.COLUMN_NAME_Gestational),
       (AncRegisterTable.COLUMN_NAME_Gravida),
       (AncRegisterTable.COLUMN_NAME_Parity),
+      (AncRegisterTable.COLUMN_NAME_NoOfANC),
       (AncRegisterTable.COLUMN_NAME_Td),
       (AncRegisterTable.COLUMN_NAME_Findings),
       (AncRegisterTable.COLUMN_NAME_Treatment),
@@ -687,6 +725,7 @@ class SQLiteHelper {
         "${item[AncRegisterTable.COLUMN_NAME_Gestational]}",
         "${item[AncRegisterTable.COLUMN_NAME_Gravida]}",
         "${item[AncRegisterTable.COLUMN_NAME_Parity]}",
+        "${item[AncRegisterTable.COLUMN_NAME_NoOfANC]}",
         "${item[AncRegisterTable.COLUMN_NAME_Td]}",
         "${item[AncRegisterTable.COLUMN_NAME_Findings]}",
         "${item[AncRegisterTable.COLUMN_NAME_Treatment]}",
@@ -933,6 +972,10 @@ class SQLiteHelper {
       EPITable.COLUMN_NAME_Address: epiVo.address,
       EPITable.COLUMN_NAME_DOB: epiVo.dob,
       EPITable.COLUMN_NAME_BCG: epiVo.bcg,
+      EPITable.COLUMN_NAME_OPV: epiVo.opv,
+      EPITable.COLUMN_NAME_PENTA: epiVo.penta,
+      EPITable.COLUMN_NAME_MMR: epiVo.mmr,
+      EPITable.COLUMN_NAME_JE: epiVo.je,
       EPITable.COLUMN_NAME_Vaccined: epiVo.vaccined,
       EPITable.COLUMN_NAME_Refer: epiVo.refer,
       EPITable.COLUMN_NAME_ReferPlace: epiVo.referPlace,
@@ -976,6 +1019,7 @@ class SQLiteHelper {
       MUACTable.COLUMM_TOWNSHIP_NAME: muacVo.townshipName,
       MUACTable.COLUMM_TOWNSHIP_LOCAL_NAME: muacVo.townshipLocalName,
       MUACTable.COLUMM_CLINIC: muacVo.clinic,
+      MUACTable.COLUMM_REPORTING_PERIOD: muacVo.reportingPeroid,
       MUACTable.COLUMM_VILLAGE_NAME: muacVo.villageName,
       MUACTable.COLUMM_VOLUNTEER_NAME: muacVo.volunteerName,
       MUACTable.COLUMN_NAME_Date: muacVo.date,
@@ -1100,6 +1144,10 @@ class SQLiteHelper {
       epiVo.address = epi[EPITable.COLUMN_NAME_Address];
       epiVo.dob = epi[EPITable.COLUMN_NAME_DOB];
       epiVo.bcg = epi[EPITable.COLUMN_NAME_BCG];
+      epiVo.opv = epi[EPITable.COLUMN_NAME_OPV];
+      epiVo.penta = epi[EPITable.COLUMN_NAME_PENTA];
+      epiVo.mmr = epi[EPITable.COLUMN_NAME_MMR];
+      epiVo.je = epi[EPITable.COLUMN_NAME_JE];
       epiVo.vaccined = epi[EPITable.COLUMN_NAME_Vaccined];
       epiVo.refer = epi[EPITable.COLUMN_NAME_Refer];
       epiVo.referPlace = epi[EPITable.COLUMN_NAME_ReferPlace];
@@ -1125,6 +1173,7 @@ class SQLiteHelper {
       muacVo.townshipName = muac[MUACTable.COLUMM_TOWNSHIP_NAME];
       muacVo.townshipLocalName = muac[MUACTable.COLUMM_TOWNSHIP_LOCAL_NAME];
       muacVo.clinic = muac[MUACTable.COLUMM_CLINIC];
+      muacVo.reportingPeroid = muac[MUACTable.COLUMM_REPORTING_PERIOD];
       muacVo.villageName = muac[MUACTable.COLUMM_VILLAGE_NAME];
       muacVo.volunteerName = muac[MUACTable.COLUMM_VOLUNTEER_NAME];
       muacVo.date = muac[MUACTable.COLUMN_NAME_Date];
@@ -1206,6 +1255,10 @@ class SQLiteHelper {
       (EPITable.COLUMN_NAME_Address),
       (EPITable.COLUMN_NAME_DOB),
       (EPITable.COLUMN_NAME_BCG),
+      (EPITable.COLUMN_NAME_OPV),
+      (EPITable.COLUMN_NAME_PENTA),
+      (EPITable.COLUMN_NAME_MMR),
+      (EPITable.COLUMN_NAME_JE),
       (EPITable.COLUMN_NAME_Vaccined),
       (EPITable.COLUMN_NAME_Refer),
       (EPITable.COLUMN_NAME_ReferPlace),
@@ -1235,6 +1288,10 @@ class SQLiteHelper {
         "${item[EPITable.COLUMN_NAME_Address]}",
         "${item[EPITable.COLUMN_NAME_DOB]}",
         "${item[EPITable.COLUMN_NAME_BCG]}",
+        "${item[EPITable.COLUMN_NAME_OPV]}",
+        "${item[EPITable.COLUMN_NAME_PENTA]}",
+        "${item[EPITable.COLUMN_NAME_MMR]}",
+        "${item[EPITable.COLUMN_NAME_JE]}",
         "${item[EPITable.COLUMN_NAME_Vaccined]}",
         "${item[EPITable.COLUMN_NAME_Refer]}",
         "${item[EPITable.COLUMN_NAME_ReferPlace]}",
@@ -1258,6 +1315,7 @@ class SQLiteHelper {
       "Township (MIMU)",
       "Township (Local)",
       "Clinic",
+      (MUACTable.COLUMM_REPORTING_PERIOD),
       (MUACTable.COLUMM_VILLAGE_NAME),
       (MUACTable.COLUMM_VOLUNTEER_NAME),
       (MUACTable.COLUMN_NAME_Date),
@@ -1290,6 +1348,7 @@ class SQLiteHelper {
         "${item[MUACTable.COLUMM_TOWNSHIP_NAME]}",
         "${item[MUACTable.COLUMM_TOWNSHIP_LOCAL_NAME]}",
         "${item[MUACTable.COLUMM_CLINIC]}",
+        "${item[MUACTable.COLUMM_REPORTING_PERIOD]}",
         "${item[MUACTable.COLUMM_VILLAGE_NAME]}",
         "${item[MUACTable.COLUMM_VOLUNTEER_NAME]}",
         "${item[MUACTable.COLUMN_NAME_Date]}",
@@ -1565,6 +1624,7 @@ class SQLiteHelper {
       HETable.COLUMM_STATE_NAME: heVo.stateName,
       HETable.COLUMM_TOWNSHIP_NAME: heVo.townshipName,
       HETable.COLUMM_TOWNSHIP_LOCAL_NAME: heVo.townshipLocalName,
+      HETable.COLUMM_REPORTING_PERIOD: heVo.reportingPeroid,
       HETable.COLUMM_Village_Name: heVo.villageName,
       HETable.COLUMM_NAME_Topic: heVo.topic,
       HETable.COLUMN_NAME_Date: heVo.date,
@@ -1615,6 +1675,7 @@ class SQLiteHelper {
       ReferralTable.COLUMM_TOWNSHIP_NAME: referalVo.townshipName,
       ReferralTable.COLUMM_TOWNSHIP_LOCAL_NAME: referalVo.townshipLocalName,
       ReferralTable.COLUMM_CLINIC: referalVo.clinic,
+      ReferralTable.COLUMM_REPORTING_PERIOD: referalVo.reportingPeroid,
       ReferralTable.COLUMM_Village_Name: referalVo.villageName,
       ReferralTable.COLUMN_NAME_Date: referalVo.date,
       ReferralTable.COLUMN_NAME_Name: referalVo.name,
@@ -1735,6 +1796,7 @@ class SQLiteHelper {
       muacVo.stateName = muac[HETable.COLUMM_STATE_NAME];
       muacVo.townshipName = muac[HETable.COLUMM_TOWNSHIP_NAME];
       muacVo.townshipLocalName = muac[HETable.COLUMM_TOWNSHIP_LOCAL_NAME];
+      muacVo.reportingPeroid = muac[HETable.COLUMM_REPORTING_PERIOD];
       muacVo.villageName = muac[HETable.COLUMM_Village_Name];
       muacVo.topic = muac[HETable.COLUMM_NAME_Topic];
       muacVo.date = muac[HETable.COLUMN_NAME_Date];
@@ -1768,6 +1830,7 @@ class SQLiteHelper {
       muacVo.townshipName = muac[ReferralTable.COLUMM_TOWNSHIP_NAME];
       muacVo.townshipLocalName = muac[ReferralTable.COLUMM_TOWNSHIP_LOCAL_NAME];
       muacVo.clinic = muac[ReferralTable.COLUMM_CLINIC];
+      muacVo.reportingPeroid = muac[ReferralTable.COLUMM_REPORTING_PERIOD];
       muacVo.villageName = muac[ReferralTable.COLUMM_Village_Name];
       muacVo.date = muac[ReferralTable.COLUMN_NAME_Date];
       muacVo.name = muac[ReferralTable.COLUMN_NAME_Name];
@@ -1915,6 +1978,7 @@ class SQLiteHelper {
       "State/Region",
       "Township (MIMU)",
       "Township (Local)",
+      (HETable.COLUMM_REPORTING_PERIOD),
       (HETable.COLUMM_Village_Name),
       (HETable.COLUMM_NAME_Topic),
       (HETable.COLUMN_NAME_Date),
@@ -1942,6 +2006,7 @@ class SQLiteHelper {
         "${item[HETable.COLUMM_STATE_NAME]}",
         "${item[HETable.COLUMM_TOWNSHIP_NAME]}",
         "${item[HETable.COLUMM_TOWNSHIP_LOCAL_NAME]}",
+        "$item[HETable.COLUMM_REPORTING_PERIOD]}",
         "${item[HETable.COLUMM_Village_Name]}",
         "${item[HETable.COLUMM_NAME_Topic]}",
         "${item[HETable.COLUMN_NAME_Date]}",
@@ -1974,6 +2039,7 @@ class SQLiteHelper {
       "Township (MIMU)",
       "Township (Local)",
       "Clinic",
+      (ReferralTable.COLUMM_REPORTING_PERIOD),
       (ReferralTable.COLUMM_Village_Name),
       (ReferralTable.COLUMN_NAME_Date),
       (ReferralTable.COLUMN_NAME_Name),
@@ -2003,6 +2069,7 @@ class SQLiteHelper {
         "${item[ReferralTable.COLUMM_TOWNSHIP_NAME]}",
         "${item[ReferralTable.COLUMM_TOWNSHIP_LOCAL_NAME]}",
         "${item[ReferralTable.COLUMM_CLINIC]}",
+        "${item[ReferralTable.COLUMM_REPORTING_PERIOD]}",
         "${item[ReferralTable.COLUMM_Village_Name]}",
         "${item[ReferralTable.COLUMN_NAME_Date]}",
         "${item[ReferralTable.COLUMN_NAME_Name]}",
@@ -2125,4 +2192,108 @@ class SQLiteHelper {
     return columnList;
   }
 
+
+  //IHRP FORM
+
+  //INSERT
+  Future insertFollowUpDataToDB(FollowUpVo vo) async {
+    final db = await database;
+    Batch batch = db.batch();
+
+    var data = <String, dynamic>{
+      FollowUpTable.COLUMM_ART_Id: vo.artId,
+      FollowUpTable.COLUMM_DATE: vo.date,
+      FollowUpTable.COLUMM_OUTCOME: vo.outcome,
+      FollowUpTable.COLUMM_TB_STATUS: vo.tbStatus,
+      FollowUpTable.COLUMM_ADHERENCE: vo.adHerence,
+      FollowUpTable.COLUMM_VIRAL_LOAD: vo.viralLoad,
+      FollowUpTable.COLUMM_NEXT_VISIT: vo.nextVISIT
+    };
+
+      batch.insert(FollowUpTable.TABLE_NAME, data,
+
+          conflictAlgorithm: ConflictAlgorithm.replace);
+
+      batch.commit();
+
+
+
+    return;
+  }
+
+  Future insertTBFollowUpDataToDB(TBFollowUpVo vo) async {
+    final db = await database;
+    Batch batch = db.batch();
+
+    var data = <String, dynamic>{
+      TBFollowUpTable.COLUMM_TB_Id: vo.tbId,
+      TBFollowUpTable.COLUMM_DATE: vo.date,
+      TBFollowUpTable.COLUMM_S: vo.s,
+      TBFollowUpTable.COLUMM_X: vo.x,
+      TBFollowUpTable.COLUMM_T: vo.t,
+      TBFollowUpTable.COLUMM_LABNO: vo.latNo,
+      TBFollowUpTable.COLUMM_REMARK: vo.remark
+    };
+
+    batch.insert(TBFollowUpTable.TABLE_NAME, data,
+
+        conflictAlgorithm: ConflictAlgorithm.replace);
+
+    batch.commit();
+
+    return;
+  }
+
+
+  //SELECT
+  Future<List<FollowUpVo>> getAllFollowUpFromDB() async {
+    final db = await database;
+    List<FollowUpVo> followData = [];
+    dynamic value = await db.rawQuery(
+        "SELECT * FROM '${FollowUpTable.TABLE_NAME}';", null);
+
+    for (var item in value) {
+      FollowUpVo vo = FollowUpVo();
+      vo.id = item[FollowUpTable.COLUMM_Id];
+      vo.artId = item[FollowUpTable.COLUMM_ART_Id];
+      vo.date = item[FollowUpTable.COLUMM_DATE];
+      vo.outcome = item[FollowUpTable.COLUMM_OUTCOME];
+      vo.tbStatus = item[FollowUpTable.COLUMM_TB_STATUS];
+      vo.adHerence = item[FollowUpTable.COLUMM_ADHERENCE];
+      vo.viralLoad = item[FollowUpTable.COLUMM_VIRAL_LOAD];
+      vo.nextVISIT = item[FollowUpTable.COLUMM_NEXT_VISIT];
+      followData.add(vo);
+    }
+    return followData;
+  }
+
+  Future<List<TBFollowUpVo>> getAllTBFollowUpFromDB() async {
+    final db = await database;
+    List<TBFollowUpVo> followData = [];
+    dynamic value = await db.rawQuery(
+        "SELECT * FROM '${TBFollowUpTable.TABLE_NAME}';", null);
+
+    for (var item in value) {
+      TBFollowUpVo vo = TBFollowUpVo();
+      vo.id = item[TBFollowUpTable.COLUMM_Id];
+      vo.tbId = item[TBFollowUpTable.COLUMM_TB_Id];
+      vo.date = item[TBFollowUpTable.COLUMM_DATE];
+      vo.s = item[TBFollowUpTable.COLUMM_S];
+      vo.x = item[TBFollowUpTable.COLUMM_X];
+      vo.t = item[TBFollowUpTable.COLUMM_T];
+      vo.latNo = item[TBFollowUpTable.COLUMM_LABNO];
+      vo.remark = item[TBFollowUpTable.COLUMM_REMARK];
+      followData.add(vo);
+    }
+    return followData;
+  }
+
+  //DELETE
+  Future deleteFollowUpFromDB(int id) async {
+    final db = await database;
+    Batch batch = db.batch();
+    batch.delete(TBFollowUpTable.TABLE_NAME, where: 'id = ?', whereArgs: [id]);
+    batch.commit();
+    return;
+  }
 }

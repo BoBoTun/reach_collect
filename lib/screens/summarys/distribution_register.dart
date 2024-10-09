@@ -43,6 +43,10 @@ class _DistributionRegisterState extends State<DistributionRegister> {
   TextEditingController item2Controller = TextEditingController();
   TextEditingController item3Controller = TextEditingController();
 
+  TextEditingController item1ControllerQty = TextEditingController();
+  TextEditingController item2ControllerQty = TextEditingController();
+  TextEditingController item3ControllerQty = TextEditingController();
+
   TextEditingController householdController = TextEditingController();
 
 
@@ -81,7 +85,13 @@ class _DistributionRegisterState extends State<DistributionRegister> {
     distribution = AppConstants.distributionList[0];
     beneficiary = AppConstants.beneficiaryList[0];
 
+    item1Controller.text = PreferenceManager.getString(item1) ?? '';
+    item2Controller.text = PreferenceManager.getString(item2) ?? '';
+    item3Controller.text = PreferenceManager.getString(item3) ?? '';
 
+    item1ControllerQty.text = PreferenceManager.getString(item1value) ?? '';
+    item2ControllerQty.text = PreferenceManager.getString(item2value) ?? '';
+    item3ControllerQty.text = PreferenceManager.getString(item3value) ?? '';
 
   }
   @override
@@ -287,7 +297,12 @@ class _DistributionRegisterState extends State<DistributionRegister> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Item 1', 1, item1Controller,10000),
+                        inputBox('Item 1 name', 1, item1Controller,10000),
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Item 1 Qty', 1, item1ControllerQty,5),
                       ],
                     ),
                     Column(
@@ -301,7 +316,11 @@ class _DistributionRegisterState extends State<DistributionRegister> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Item 2', 1, item2Controller,10000),
+                        inputBox('Item 2 name', 1, item2Controller,10000),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Item 2 Qty', 1, item2ControllerQty,5),
                       ],
                     ),
                     Column(
@@ -315,7 +334,11 @@ class _DistributionRegisterState extends State<DistributionRegister> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Item 3', 1, item3Controller,10000),
+                        inputBox('Item 3 name', 1, item3Controller,10000),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Item 3 Qty', 1, item3ControllerQty,5),
                       ],
                     ),
 
@@ -340,7 +363,7 @@ class _DistributionRegisterState extends State<DistributionRegister> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('# of Household', 1, householdController,10000),
+                        inputBox('# of Household', 1, householdController,3),
                       ],
                     ),
 
@@ -478,66 +501,80 @@ class _DistributionRegisterState extends State<DistributionRegister> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
-                          /*
-                          if (nameController.text.isEmpty ) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                                content: Center(
-                                  child: Text('Sorry!! Please input empty fields'),
-                                )));
-                          }
-                          */
-                          //Add To DB
-                          DistributionVo dataVo = DistributionVo(
-                              tableName : AppConstants.consultationTable,
-                              orgName: PreferenceManager.getString(ORG),
-                              stateName: PreferenceManager.getString(STATE),
-                              townshipName: PreferenceManager.getString(REGION),
-                              townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
-                              clinic: clinicTeamController.text,
-                              reportingPeroid: reportingPeriod,
-                              date: date,
-                              distribution: distribution,
-                              beneficiary: beneficiary,
-                              item1: item1Controller.text,
-                              item2: item2Controller.text,
-                              item3: item3Controller.text,
-                              household: householdController.text,
-                              under18: "${under18M.text}|${under18F.text}",
-                              over18: "${over18M.text}|${over18F.text}",
-                              iDP: "${idpM.text}|${idpF.text}",
-                              disability: "${disabilityM.text}|${disabilityF.text}",
-                              remark: remarkController.text,
-                              createDate: todayDateString,
-                              updateDate: todayDateString
-                          );
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
+                              //Add To DB
+                              DistributionVo dataVo = DistributionVo(
+                                  tableName : AppConstants.consultationTable,
+                                  orgName: PreferenceManager.getString(ORG),
+                                  stateName: PreferenceManager.getString(STATE),
+                                  townshipName: PreferenceManager.getString(REGION),
+                                  townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
+                                  clinic: clinicTeamController.text,
+                                  reportingPeroid: reportingPeriod,
+                                  date: date,
+                                  distribution: distribution,
+                                  beneficiary: beneficiary,
+                                  item1: "${item1Controller.text}|${item1ControllerQty.text}",
+                                  item2: "${item2Controller.text}|${item2ControllerQty.text}",
+                                  item3: "${item3Controller.text}|${item3ControllerQty.text}",
+                                  household: householdController.text,
+                                  under18: "${under18M.text}|${under18F.text}",
+                                  over18: "${over18M.text}|${over18F.text}",
+                                  iDP: "${idpM.text}|${idpF.text}",
+                                  disability: "${disabilityM.text}|${disabilityF.text}",
+                                  remark: remarkController.text,
+                                  createDate: todayDateString,
+                                  updateDate: todayDateString
+                              );
 
-                          try {
-                            PreferenceManager.setString(CLINIC, clinicTeamController.text);
-                            PreferenceManager.setString(CHANNEL, channel);
-                            PreferenceManager.setString(REPORT_PERIOD, reportingPeriod);
-                            //  DatabaseProvider provider = DatabaseProvider.db;
-                            // provider.insertACNDataToDB(dataVo);
-                            helper.insertDistributionDataToDB(dataVo,false);
+                              try {
+                                PreferenceManager.setString(CLINIC, clinicTeamController.text);
+                                PreferenceManager.setString(CHANNEL, channel);
+                                PreferenceManager.setString(REPORT_PERIOD, reportingPeriod);
+                                //  DatabaseProvider provider = DatabaseProvider.db;
+                                // provider.insertACNDataToDB(dataVo);
 
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (builder) =>
-                                        HomeScreen(indexOfTab: 1, selectedSideIndex: 2,)));
-                          } catch (e) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                                content: Center(
-                                  child: Text('Something wrong!!'),
-                                )));
-                          }
+                                PreferenceManager.setString(item1, item1Controller.text);
+                                PreferenceManager.setString(item2, item2Controller.text);
+                                PreferenceManager.setString(item3, item3Controller.text);
 
-                          //End add to DB
-                        }),
+                                PreferenceManager.setString(item1value, item1ControllerQty.text);
+                                PreferenceManager.setString(item2value, item2ControllerQty.text);
+                                PreferenceManager.setString(item3value, item3ControllerQty.text);
+                                helper.insertDistributionDataToDB(dataVo,false);
+
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (builder) =>
+                                            HomeScreen(indexOfTab: 1, selectedSideIndex: 2,)));
+                              } catch (e) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                    content: Center(
+                                      child: Text('Something wrong!!'),
+                                    )));
+                              }
+
+                              //End add to DB
+                            }),
+                      ],
+                    ),
+
                   ),
                 ),
               ],
@@ -585,7 +622,22 @@ class _DistributionRegisterState extends State<DistributionRegister> {
           ]),
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: TextField(
+        child: controller == householdController ||
+        controller == item1ControllerQty ||
+          controller == item2ControllerQty ||
+          controller == item3ControllerQty
+            ? TextField(
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(limit),
+          ],
+          controller: controller,
+          maxLines: maxlines,
+          decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: title,
+              hintStyle: const TextStyle(color: Colors.grey)),
+        ) :TextField(
           controller: controller,
           maxLines: maxlines,
           decoration: InputDecoration(

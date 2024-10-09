@@ -17,6 +17,12 @@ import 'package:reach_collect/screens/consultation/edit/edit_pnu.dart';
 import 'package:reach_collect/screens/consultation/epi_register.dart';
 import 'package:reach_collect/screens/consultation/muac_register.dart';
 import 'package:reach_collect/screens/consultation/pnu_register.dart';
+import 'package:reach_collect/screens/ihrp/art_register.dart';
+import 'package:reach_collect/screens/ihrp/hiv_register.dart';
+import 'package:reach_collect/screens/ihrp/malaria_register.dart';
+import 'package:reach_collect/screens/ihrp/tb_individual_register.dart';
+import 'package:reach_collect/screens/ihrp/tb_referral_register.dart';
+import 'package:reach_collect/screens/ihrp/tb_screen_register.dart';
 import 'package:reach_collect/screens/rmnch/acm_register.dart';
 import 'package:reach_collect/screens/rmnch/delivery_register.dart';
 import 'package:reach_collect/screens/rmnch/edit/edit_delivery.dart';
@@ -65,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> rmnchList = ['ANC', 'Delivery', 'SRH'];
   List<String> consultationList = ['EPI', 'MUAC', 'Pnu&Diarr'];
   List<String> summaryList = ['Consultation','Distribution','Health Education','Referral'];
+  List<String> ihrpList = ['Malaria', 'TB Referral', 'TB Screening','TB Treatment','HIV Testing', 'ART'];
   List<List<String>> titleList = [['']];
   List<List<String>> itemList = [['']];
 
@@ -169,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     }
-    else if (widget.selectedSideIndex == 2){
+    else if (widget.selectedSideIndex == 3){
       //UNDER5 FORM
       titleList = widget.indexOfTab == 0 ?
       AppConstants.consultationTitleList :
@@ -197,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
           distributionVo = value;
           setState(() {
             itemList = distributionVo.asMap()
-                .entries.map((item) => [item.key + 1, item.value.date, item.value.distribution, item.value.beneficiary, item.value.item1,item.value.item2,item.value.household,item.value.iDP,item.value.id].map((e) => e.toString()).toList()).toList();
+                .entries.map((item) => [item.key + 1, item.value.date, item.value.distribution, item.value.beneficiary, item.value.item1,item.value.item2,item.value.item3,item.value.household,item.value.id].map((e) => e.toString()).toList()).toList();
             //itemList.add([" "]);
           });
         });
@@ -226,7 +233,6 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         });
       }else{
-
         helper.getAllReferralDataFromDB().then((value) {
           referralVo = value;
           setState(() {
@@ -422,7 +428,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               )
                             ],
                           )
-                        else if (widget.selectedSideIndex == 2)
+                        else if (widget.selectedSideIndex == 3)
                           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -485,8 +491,83 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               )
             ],
-          ),
-
+          )
+                        else
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding:  EdgeInsets.only(top: 20),
+                                    child: DefaultTabController(
+                                      initialIndex: widget.indexOfTab,
+                                      length: ihrpList.length,
+                                      child: TabBar(
+                                          onTap: (value) {
+                                            setState(() {
+                                              widget.indexOfTab = value;
+                                              //widget.tab(value);
+                                              reloadData();
+                                            });
+                                          },
+                                          tabAlignment: TabAlignment.start,
+                                          isScrollable: true,
+                                          dividerColor: Colors.white,
+                                          tabs: ihrpList
+                                              .map((e) => Tab(
+                                            child: Text(e),
+                                          ))
+                                              .toList()),
+                                    ),
+                                  ),
+                                ),
+                                CustomButton(
+                                  buttonHeight: 35,
+                                  label: 'New',
+                                  iconName: AppTheme.kPlusIcon,
+                                  width: 120,
+                                  onPressed: () {
+                                    if (widget.indexOfTab == 0) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (builder) =>
+                                              const MalariaRegister()));
+                                    }else if(widget.indexOfTab == 1 ){
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (builder) =>
+                                              const TBReferralRegister()));
+                                    }else if(widget.indexOfTab == 2 ){
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (builder) =>
+                                              const TBScreenRegister()));
+                                    }else if(widget.indexOfTab == 3 ){
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (builder) =>
+                                              const TBIndividualRegister()));
+                                    }else if(widget.indexOfTab == 4 ){
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (builder) =>
+                                              const HIVRegister()));
+                                    }else {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (builder) =>
+                                              const ARTRegister()));
+                                    }
+                                  },
+                                )
+                              ],
+                            ),
 
                         //divider
                         const Divider(),
@@ -578,11 +659,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                   helper.deleteReferralFromDB(int.parse(cell.value));
                                                                 }
                                                               }
-
-
                                                               reloadData();
-
-
                                                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                                                                   content: Center(
                                                                     child: Text('Delete data successfully!'),

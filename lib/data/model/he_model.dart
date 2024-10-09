@@ -6,6 +6,7 @@ class HEVo {
   String? stateName;
   String? townshipName;
   String? townshipLocalName;
+  String? reportingPeroid;
   String? villageName;
   String? topic;
   String? date;
@@ -28,6 +29,7 @@ class HEVo {
     this.stateName,
     this.townshipName,
     this.townshipLocalName,
+    this.reportingPeroid,
     this.villageName,
     this.topic,
     this.date,
@@ -52,6 +54,7 @@ class HEVo {
       HETable.COLUMM_STATE_NAME: stateName,
       HETable.COLUMM_TOWNSHIP_NAME: townshipName,
       HETable.COLUMM_TOWNSHIP_LOCAL_NAME: townshipLocalName,
+      HETable.COLUMM_REPORTING_PERIOD: reportingPeroid,
       HETable.COLUMM_Village_Name: villageName,
       HETable.COLUMM_NAME_Topic: topic,
       HETable.COLUMN_NAME_Date: date,

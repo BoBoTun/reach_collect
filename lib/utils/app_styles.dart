@@ -8,6 +8,7 @@ class AppTheme {
   static const Color shadowColor = Color(0x14003747);
   static const Color thirdColor = Color(0xff026A81);
   static const Color selectColor = Color(0xff5594a2);
+  static const Color cancelColor = Color(0xffc94141);
   //Text Style
   static const TextStyle splashStyle = TextStyle(
       color: secondaryColor,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:reach_collect/data/model/delivery_model.dart';
+import 'package:reach_collect/widgets/multi_radio.dart';
 
 import '../../../network/presistance/SQLiteHelper.dart';
 import '../../../utils/app_constant.dart';
@@ -44,14 +45,15 @@ class _EditDeliveryState extends State<EditDelivery> {
 
   //data var
   String date = '';
-  String disability = 'true';
-  String idp = 'true';
+  String disability = '';
+  String idp = '';
   String attendedby = '';
   String outcome = '';
-  String tdComplete = 'true';
+  String tdComplete = 'Yes';
   String liveOrstill = 'Live birth';
-  String neonatalRecursion = 'true';
-  String breadFeeding = 'true';
+  String neonatalRecursion = 'Yes';
+  String breadFeeding = 'Yes';
+  String ageSymbol = '';
 
   TextEditingController nameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
@@ -88,19 +90,22 @@ class _EditDeliveryState extends State<EditDelivery> {
 
     date = widget.deliveryVo.date ?? '';
     nameController.text = widget.deliveryVo.name ?? '';
-    ageController.text = widget.deliveryVo.age ?? '';
     gestationalWeekController.text = widget.deliveryVo.gestational ?? '';
     gravidaController.text = widget.deliveryVo.gravida ?? '';
     treatmentController.text = widget.deliveryVo.treatment ?? '';
     remarkController.text = widget.deliveryVo.remark ?? '';
     birthWeightController.text = widget.deliveryVo.birthWeight ?? '';
 
-    disability = widget.deliveryVo.disability ?? 'true';
-    idp = widget.deliveryVo.iDP ?? 'true';
-    tdComplete = widget.deliveryVo.tDComplete ?? 'true';
+    disability = widget.deliveryVo.disability ?? 'Yes';
+    idp = widget.deliveryVo.iDP ?? 'Yes';
+    tdComplete = widget.deliveryVo.tDComplete ?? 'Yes';
     liveOrstill = widget.deliveryVo.birthType ?? 'Live birth';
-    neonatalRecursion = widget.deliveryVo.neonatal ?? 'true';
-    breadFeeding = widget.deliveryVo.breastfeeding ?? 'true';
+    neonatalRecursion = widget.deliveryVo.neonatal ?? 'Yes';
+    breadFeeding = widget.deliveryVo.breastfeeding ?? 'Yes';
+
+    List ageList = (widget.deliveryVo.age ?? '').split('|');
+    ageController.text = ageList[0];
+    ageSymbol = ageList[1];
 
 
 
@@ -251,16 +256,6 @@ class _EditDeliveryState extends State<EditDelivery> {
                               ),
                             ),
 
-/*
-                      DropdownListView(containerWidth: 200, value: (String value, int index) {
-                        setState(() {
-                          print("Selected Index :: $index");
-                          //selectedStateId = index ;
-                          townshipList = AppConstants.townshipList[index];
-                          selectedState = value;
-                        });
-                       }, options: stateList,),
-                    */
                           ],
                         ),
                       ],
@@ -472,14 +467,20 @@ class _EditDeliveryState extends State<EditDelivery> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Age (number only)',
+                          'Age',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Age (number only)', 1, ageController,3),
+                        Row(
+                          children: [
+                            small_inputBox('Age', 1, ageController, 3),
+                            SizedBox(width: 20,),
+                            DropdownListView(containerWidth: 160, value: (String value, int index) { ageSymbol = value; }, options: ['Years','Months'], currentValue: ageSymbol,),
+                          ],
+                        )
                       ],
                     )
                   ],
@@ -507,7 +508,7 @@ class _EditDeliveryState extends State<EditDelivery> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: HorizontalRadioButton(
+                              child: MultiRadio(
                                 radioValue: (String value) {
                                   disability = value;
                                 },
@@ -533,7 +534,7 @@ class _EditDeliveryState extends State<EditDelivery> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: HorizontalRadioButton(
+                              child: MultiRadio(
                                 radioValue: (String value) {
                                   idp = value;
                                 },
@@ -650,14 +651,14 @@ class _EditDeliveryState extends State<EditDelivery> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Birth Weight',
+                          'Birth Weight (Kg)',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('Birth Weight', 1, birthWeightController,2),
+                        inputBox('Birth Weight (Kg)', 1, birthWeightController,3),
                       ],
                     ),
                     SizedBox(
@@ -748,7 +749,7 @@ class _EditDeliveryState extends State<EditDelivery> {
                             attendedby = value;
                           },
                           options: AppConstants.attandedList,
-                          currentValue: AppConstants.attandedList[0],
+                          currentValue: attendedby,
                         )
                       ],
                     ),
@@ -813,24 +814,131 @@ class _EditDeliveryState extends State<EditDelivery> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
-                          if (nameController.text.isEmpty ||
-                              ageController.text.isEmpty ||
-                              clinicTeamController.text.isEmpty ||
-                              gestationalWeekController.text.isEmpty ||
-                              gravidaController.text.isEmpty ||
-                              birthWeightController.text.isEmpty ||
-                              treatmentController.text.isEmpty ||
-                              channel.isEmpty) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                                content: Center(
-                                  child: Text('Sorry!! Please input empty fields'),
-                                )));
-                          } else {
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
+                              if (nameController.text.isEmpty ||
+                                  ageController.text.isEmpty ||
+                                  clinicTeamController.text.isEmpty ||
+                                  gestationalWeekController.text.isEmpty ||
+                                  gravidaController.text.isEmpty ||
+                                  birthWeightController.text.isEmpty ||
+                                  treatmentController.text.isEmpty ||
+                                  channel.isEmpty) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                    content: Center(
+                                      child: Text('Sorry!! Please input empty fields'),
+                                    )));
+                              } else {
+
+                                var age = int.parse(ageController.text);
+                                var gestation = int.parse(gestationalWeekController.text);
+                                var gravida = int.parse(gravidaController.text);
+                                var birthWeight = double.parse(birthWeightController.text);
+
+                                if (age > 0 && age < 101){
+                                  if (gestation > 0 && gestation < 43){
+                                    if (gravida > 0 && gravida < 21){
+                                      if (birthWeight > 0.0 && birthWeight < 15.0) {
+
+
+                                        DeliveryVo dataVo = DeliveryVo(
+                                            id: widget.deliveryVo.id,
+                                            tableName: AppConstants.deliveryTable,
+                                            orgName: orgController.text,
+                                            stateName: _selectedKey,
+                                            townshipName: _selectedItem,
+                                            townshipLocalName: townshipLocalController.text,
+                                            clinic: clinicTeamController.text,
+                                            channel: channel,
+                                            reportingPeroid: reportingPeriod,
+                                            date: date,
+                                            name: nameController.text,
+                                            age: '${ageController.text}|$ageSymbol',
+                                            disability: disability,
+                                            iDP: idp,
+                                            gestational: gestationalWeekController.text,
+                                            gravida: gravidaController.text,
+                                            tDComplete: tdComplete,
+                                            birthType: liveOrstill,
+                                            birthWeight: birthWeightController.text,
+                                            neonatal: neonatalRecursion,
+                                            breastfeeding: breadFeeding,
+                                            treatment: treatmentController.text,
+                                            attended: attendedby,
+                                            outcome: outcome,
+                                            remark: remarkController.text,
+                                            createDate: createDate,
+                                            updateDate: todayDateString
+                                        );
+
+                                        try {
+                                          // DatabaseProvider provider = DatabaseProvider.db;
+                                          helper.updateDeliveryInto(dataVo);
+
+                                          Navigator.of(context)
+                                              .pushReplacement(MaterialPageRoute(
+                                              builder: (builder) => HomeScreen(
+                                                indexOfTab: 1, selectedSideIndex: 0,
+                                              )));
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                              content: Center(
+                                                child: Text('Something wrong!!'),
+                                              )));
+                                        }
+                                      }else{
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                            content: Center(
+                                              child: Text('Birth Weight should be 1 to 14 !!!'),
+                                            )));
+                                      }
+
+                                    }else{
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                          content: Center(
+                                            child: Text('Gravida should be 1 to 20 !!!'),
+                                          )));
+                                    }
+
+                                  }else{
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                        content: Center(
+                                          child: Text('Gestational Week should be 1 to 42 weeks !!!'),
+                                        )));
+                                  }
+
+                                }else{
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                      content: Center(
+                                        child: Text('Age should be between 1 to 100 years !!!'),
+                                      )));
+                                }
+
+
+                              }
+                              /*
+                          else {
+
 
                             DeliveryVo dataVo = DeliveryVo(
                               id: widget.deliveryVo.id,
@@ -879,7 +987,11 @@ class _EditDeliveryState extends State<EditDelivery> {
                                   )));
                             }
                           }
-                        }),
+                          */
+                            }),
+                      ],
+                    ),
+
                   ),
                 ),
               ],
@@ -889,7 +1001,29 @@ class _EditDeliveryState extends State<EditDelivery> {
       ),
     );
   }
+  SizedBox small_inputBox(
+      String title, int maxlines, TextEditingController controller, int limit) {
 
+    return SizedBox(
+      width: 80,
+      height: 50,
+      child: TextField(
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(limit),
+        ],
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          border: const OutlineInputBorder(),
+          labelText: title,
+        ),
+      ),
+    );
+
+
+  }
   Container inputBox(
       String title, int maxlines, TextEditingController controller, int limit) {
     return Container(

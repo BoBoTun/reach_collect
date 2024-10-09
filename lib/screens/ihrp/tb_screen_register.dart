@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:multiselect_dropdown_flutter/multiselect_dropdown_flutter.dart';
-import 'package:reach_collect/data/model/pnu_model.dart';
+
+import '../../data/model/anc_model.dart';
 import '../../network/presistance/SQLiteHelper.dart';
 import '../../utils/app_constant.dart';
 import '../../utils/app_styles.dart';
@@ -13,63 +13,50 @@ import '../../widgets/button_widget.dart';
 import '../../widgets/custom_dropdown_widget.dart';
 import '../../widgets/custom_radio.dart';
 import '../../widgets/date_picker.dart';
-import 'package:dropdown_multi_select/dropdown_multi_select.dart';
-
+import '../../widgets/male_female_radio.dart';
 import '../../widgets/month_picker.dart';
+import '../../widgets/radio_button.dart';
+import '../../widgets/tdDropdown.dart';
 import '../home_screen.dart';
-
-class PNURegister extends StatefulWidget {
-  const PNURegister({super.key});
+class TBScreenRegister extends StatefulWidget {
+  const TBScreenRegister({super.key});
 
   @override
-  State<PNURegister> createState() => _PNURegisterState();
+  State<TBScreenRegister> createState() => _TBScreenRegisterState();
 }
 
-class _PNURegisterState extends State<PNURegister> {
+class _TBScreenRegisterState extends State<TBScreenRegister> {
   //data var
   String date = '';
   String disability = 'Yes';
-  String gender = 'ကျား';
-  String disabled = 'Yes';
-  String relocation = 'Yes';
-  String bcgValue = '';
-  String isPrevent = 'Yes';
-  String handOverValue = '';
-
+  String idp = 'Yes';
+  String attendedby = '';
+  String outcome = '';
   String reportingPeriod = '';
+  String tdSelectString = '';
+  String tdSelectedDate = '';
   String channel = '';
   String todayDateString = '';
-  String swelling = '';
-  String patientType = '';
-
-  String clinic = 'ဆေးခန်း';
-  String referGo = 'Yes';
-
-  String selectSymptomsList = '';
-  String selectTypeOfDiseaseList = '';
-
-  String amclin = 'အလုံး';
+  String tvContact = 'Yes';
+  String sex = 'Male';
+  String symptoms = '';
 
 
-  TextEditingController clinicTeamController = TextEditingController();
   TextEditingController nameController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
-  TextEditingController remarkController = TextEditingController();
-
-  TextEditingController villageNameController = TextEditingController();
-  TextEditingController volunteerNameController = TextEditingController();
-
   TextEditingController ageController = TextEditingController();
-  TextEditingController treatmentPeriodController = TextEditingController();
-  TextEditingController amoSislinController = TextEditingController();
-  TextEditingController saltPackageContoller = TextEditingController();
-  TextEditingController zincSulphateWholeController = TextEditingController();
-  TextEditingController paracetamolWholeController = TextEditingController();
-
-  late List<String> selectedValueList;
-
+  TextEditingController referredFromController = TextEditingController();
+  TextEditingController gravidaController = TextEditingController();
+  TextEditingController parityController = TextEditingController();
+  TextEditingController findingsController = TextEditingController();
+  TextEditingController treatmentController = TextEditingController();
+  TextEditingController remarkController = TextEditingController();
+  TextEditingController clinicTeamController = TextEditingController();
+  TextEditingController nOfANCVisitController = TextEditingController();
+  TextEditingController tbResultController = TextEditingController();
+  TextEditingController regNumController = TextEditingController();
 
   final SQLiteHelper helper = SQLiteHelper();
+
 
   @override
   void initState() {
@@ -78,19 +65,24 @@ class _PNURegisterState extends State<PNURegister> {
     DateTime todayDate = DateTime.now();
 
     date = "${todayDate.toLocal()}".split(' ')[0];
+    tdSelectedDate = "${todayDate.toLocal()}".split(' ')[0];
     todayDateString = DateFormat('yyyy-MM-dd - kk-mm-ss').format(todayDate);
 
     clinicTeamController.text = PreferenceManager.getString(CLINIC) ?? '';
-    channel = PreferenceManager.getString(CHANNEL) ?? '';
+    channel = AppConstants.channelList[0];
+
     reportingPeriod = PreferenceManager.getString(REPORT_PERIOD) ?? date;
 
-    handOverValue = AppConstants.handoverList[0];
-    patientType = AppConstants.patientTypeList[0];
+    attendedby = AppConstants.attandedList[0];
+    outcome = AppConstants.outcomeList[0];
+
+    tdSelectString = '1st';
+
 
   }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -109,7 +101,7 @@ class _PNURegisterState extends State<PNURegister> {
                 width: 30,
               ),
               const Text(
-                "Pnu&Diarr Register",
+                "TB Screening Register",
                 style: AppTheme.navigationTitleStyle,
               ),
             ],
@@ -157,7 +149,21 @@ class _PNURegisterState extends State<PNURegister> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Clinic',
+                          'Clinic/Team',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Clinic/Team', 1, clinicTeamController,10000),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Channel',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -165,47 +171,10 @@ class _PNURegisterState extends State<PNURegister> {
                           height: 10,
                         ),
                         DropdownListView(containerWidth: 250, value: (String value, int index) {
-                          clinic = value;
-                        }, options: AppConstants.clinicList, currentValue: clinic.isEmpty ? AppConstants.clinicList[0] : clinic,),
-
+                          channel = value;
+                        }, options: AppConstants.channelList, currentValue: channel.isEmpty ? AppConstants.channelList[0] : channel,),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'ကျေးရွာအမည်',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        inputBox('ကျေးရွာအမည်', 1, villageNameController,10000),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'စေတနာ့ဝန်ထမ်းအမည်',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        inputBox('စေတနာ့ဝန်ထမ်းအမည်', 1, volunteerNameController,10000),
-                      ],
-                    ),
-
-                    //channel
-                  ],
-                ),
-                //pre session
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -222,8 +191,10 @@ class _PNURegisterState extends State<PNURegister> {
                         },
                           updateDateString: reportingPeriod,
                         ),
+
                       ],
                     ),
+
                     //channel
                   ],
                 ),
@@ -240,16 +211,15 @@ class _PNURegisterState extends State<PNURegister> {
                   height: 20,
                 ),
 
-                //Row 1
+                //date picker session
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'ရက်စွဲ',
+                          'Date',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -264,55 +234,52 @@ class _PNURegisterState extends State<PNURegister> {
                         ),
                       ],
                     ),
-                    //Name
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'အမည်',
+                          'Name',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('အမည်', 1, nameController,10000),
-                      ],
-                    ),
-                    //Age
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'အသက်',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        inputBox('အသက်', 1, ageController,3),
+                        inputBox('Name', 1, nameController,10000),
                       ],
                     ),
 
+                    //age
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Age (number only)',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Age (number only)', 1, ageController,3),
+                      ],
+                    )
                   ],
                 ),
                 const SizedBox(
                   height: 40,
                 ),
-
-                //Row 2
+                //disability session
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    //Gender
                     SizedBox(
                       width: 250,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'ကျား/မ',
+                            'Sex',
                             style: TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.bold),
                           ),
@@ -322,49 +289,39 @@ class _PNURegisterState extends State<PNURegister> {
                           SizedBox(
                               height: 50,
                               width: 200,
-                              child: CustomRadioButton(
+                              child: SexRadioButton(
                                 radioValue: (String value) {
-                                  gender = value;
+                                  sex = value;
                                 },
-                                activeValue: gender, radioList: ['ကျား','မ'],
+                                activeValue: sex,
                               )),
                         ],
                       ),
                     ),
-                    //Disabled
-                    SizedBox(
-                      width: 250,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'မသန်စွမ်းသူ',
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                              height: 50,
-                              width: 200,
-                              child: CustomRadioButton(
-                                radioValue: (String value) {
-                                  disabled = value;
-                                },
-                                activeValue: disabled, radioList: const ['Yes','No'],
-                              )),
-                        ],
-                      ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Referred from',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Referred from', 1, referredFromController,200),
+                      ],
                     ),
-                    //Relocation
+
+
                     SizedBox(
                       width: 250,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'ရွှေ့ပြောင်း နေထိုင်သူ',
+                            'TB Contact',
                             style: TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.bold),
                           ),
@@ -376,9 +333,9 @@ class _PNURegisterState extends State<PNURegister> {
                               width: 200,
                               child: CustomRadioButton(
                                 radioValue: (String value) {
-                                  relocation = value;
+                                  tvContact = value;
                                 },
-                                activeValue: relocation, radioList: ['Yes','No'],
+                                activeValue: tvContact, radioList: const ['Yes','No'],
                               )),
                         ],
                       ),
@@ -386,20 +343,20 @@ class _PNURegisterState extends State<PNURegister> {
                   ],
                 ),
 
+                //ges week
                 const SizedBox(
-                  height: 40,
+                  height: 10,
                 ),
-
-                //Row 3
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
 
+                    //dorp down
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'လူနာအမျိုးအစား',
+                          'Symptoms',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -407,91 +364,12 @@ class _PNURegisterState extends State<PNURegister> {
                           height: 10,
                         ),
                         DropdownListView(containerWidth: 250,
-                          value: (String value, int index) { patientType = value; }, options: AppConstants.patientTypeList, currentValue: AppConstants.patientTypeList[0],),
+                          value: (String value, int index) { symptoms = value; }, options: AppConstants.tbSymptomsList, currentValue: AppConstants.tbSymptomsList[0],),
                       ],
                     ),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'ရောဂါလက္ခဏာ',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          width: 250,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: const [
-                                BoxShadow(blurRadius: 5.0, spreadRadius: 5.0, color: Colors.black12)
-                              ]),
-                          child:MultiSelectDropdown.simpleList(
-                            list: AppConstants.symptomsList,
-                            initiallySelected: const [],
-                            onChange: (newList) {
-                              // your logic
-                              selectSymptomsList = newList.join('||');
-                            },
-                            includeSearch: true,
-                            includeSelectAll: true,
-                            isLarge: true, // Modal size will be a little large
-                            // Give a definite width when rendering this widget in a row
-                            width: 250, // Must be a definite number
-                            boxDecoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'ရောဂါအမျိုးအစား',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          width: 250,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: const [
-                                BoxShadow(blurRadius: 5.0, spreadRadius: 5.0, color: Colors.black12)
-                              ]),
-                          child:MultiSelectDropdown.simpleList(
-                            list: AppConstants.typeOfDiseaseList,
-                            initiallySelected: const [],
-                            onChange: (newList) {
-                              // your logic
-                              selectTypeOfDiseaseList = newList.join('||');
-                            },
-                            includeSearch: true,
-                            includeSelectAll: true,
-                            isLarge: false, // Modal size will be a little large
-                            // Give a definite width when rendering this widget in a row
-                            width: 250, // Must be a definite number
-                            boxDecoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-
-
                   ],
                 ),
+
 
                 const SizedBox(
                   height: 40,
@@ -506,16 +384,19 @@ class _PNURegisterState extends State<PNURegister> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+
                           const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+
                               Text(
-                                'ကုသမှု',
+                                'Examination Result',
                                 style: TextStyle(
                                     fontSize: 17, fontWeight: FontWeight.bold),
                               ),
+
                               Text(
-                                'အမောက်စီစလင်',
+                                'S',
                                 style: TextStyle(
                                     fontSize: 17, fontWeight: FontWeight.w400),
                               ),
@@ -525,16 +406,7 @@ class _PNURegisterState extends State<PNURegister> {
                           const SizedBox(
                             height: 2,
                           ),
-                          SizedBox(
-                              height: 50,
-                              width: 200,
-                              child: CustomRadioButton(
-                                radioValue: (String value) {
-                                  amclin = value;
-                                },
-                                activeValue: amclin, radioList: ['အလုံး','အရည်'],
-                              )),
-                          halfInputBox('အရေအတွက်', amoSislinController,5),
+                          halfInputBox('အ‌ဖြေ‌ရေးရန်', nameController,5),
                         ],
                       ),
                     ),
@@ -543,10 +415,6 @@ class _PNURegisterState extends State<PNURegister> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(
-                              height: 50,
-                              width: 200,
-                              child: Text('')),
                           const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -556,7 +424,7 @@ class _PNURegisterState extends State<PNURegister> {
                                     fontSize: 17, fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                'ဓာတ်ဆား (ထုပ်)',
+                                'CXR',
                                 style: TextStyle(
                                     fontSize: 17, fontWeight: FontWeight.w400),
                               ),
@@ -567,7 +435,7 @@ class _PNURegisterState extends State<PNURegister> {
                             height: 2,
                           ),
 
-                          halfInputBox('အရေအတွက်', saltPackageContoller,5),
+                          halfInputBox('အ‌ဖြေ‌ရေးရန်', nameController,5),
                         ],
                       ),
                     ),
@@ -576,10 +444,6 @@ class _PNURegisterState extends State<PNURegister> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(
-                              height: 50,
-                              width: 200,
-                              child: Text('')),
                           const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -589,7 +453,7 @@ class _PNURegisterState extends State<PNURegister> {
                                     fontSize: 17, fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                'ဇင့်ဆာလဖိတ် (လုံး)',
+                                'X',
                                 style: TextStyle(
                                     fontSize: 17, fontWeight: FontWeight.w400),
                               ),
@@ -600,7 +464,7 @@ class _PNURegisterState extends State<PNURegister> {
                             height: 2,
                           ),
 
-                          halfInputBox('အရေအတွက်', zincSulphateWholeController,5),
+                          halfInputBox('အ‌ဖြေ‌ရေးရန်', nameController,5),
                         ],
                       ),
                     ),
@@ -609,10 +473,6 @@ class _PNURegisterState extends State<PNURegister> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(
-                              height: 50,
-                              width: 200,
-                              child: Text('')),
                           const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -622,7 +482,7 @@ class _PNURegisterState extends State<PNURegister> {
                                     fontSize: 17, fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                'ပါရာစီတမော (လုံး)',
+                                'T',
                                 style: TextStyle(
                                     fontSize: 17, fontWeight: FontWeight.w400),
                               ),
@@ -633,7 +493,7 @@ class _PNURegisterState extends State<PNURegister> {
                             height: 2,
                           ),
 
-                          halfInputBox('အရေအတွက်', paracetamolWholeController,5),
+                          halfInputBox('အ‌ဖြေ‌ရေးရန်', nameController,5),
                         ],
                       ),
                     ),
@@ -644,7 +504,6 @@ class _PNURegisterState extends State<PNURegister> {
                   height: 40,
                 ),
 
-                //Row 4.5
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -652,27 +511,29 @@ class _PNURegisterState extends State<PNURegister> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(
+                          height: 50,
+                        ),
                         const Text(
-                          'ကုသသည့်ကာလ',
+                          'Result(1-3)',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('ကုသသည့်ကာလ', 1, treatmentPeriodController,3),
+                        inputBox('Result(1-3)', 1, tbResultController,200),
                       ],
                     ),
+
+
                     SizedBox(
                       width: 250,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(
-                            height: 10,
-                          ),
                           const Text(
-                            'ညွှန်းပို့မှု',
+                            'TPT (6H/3HP/No)',
                             style: TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.bold),
                           ),
@@ -684,85 +545,60 @@ class _PNURegisterState extends State<PNURegister> {
                               width: 200,
                               child: CustomRadioButton(
                                 radioValue: (String value) {
-                                  isPrevent = value;
+                                  tvContact = value;
                                 },
-                                activeValue: isPrevent, radioList: ['Yes','No'],
+                                activeValue: tvContact, radioList: const ['Yes','No'],
                               )),
+                      inputBox('', 1, tbResultController,200)
                         ],
                       ),
                     ),
 
-                    SizedBox(
-                      width: 250),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        const Text(
+                          'Reg No.',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Reg No.', 1, regNumController,200),
+                      ],
+                    ),
                   ],
                 ),
-
 
                 const SizedBox(
                   height: 40,
                 ),
-                //Row 5
+
+                //attended
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    //dorp down
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'ညွှန်းပို့သည့်နေရာ',
+                          'Remark',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        DropdownListView(containerWidth: 250,
-                          value: (String value, int index) { handOverValue = value; }, options: AppConstants.handoverList, currentValue: AppConstants.handoverList[0],),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 250,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'ညွှန်းပို့ရာသို့ သွား/မသွား',
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                              height: 50,
-                              width: 200,
-                              child: CustomRadioButton(
-                                radioValue: (String value) {
-                                  referGo = value;
-                                },
-                                activeValue: referGo, radioList: ['Yes','No'],
-                              )),
-                        ],
-                      ),
-                    ),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'မှတ်ချက်',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        inputBox('မှတ်ချက်', 3, remarkController,10000),
+                        inputBox('Remark', 3, remarkController,10000),
                       ],
                     ),
                   ],
                 ),
+
                 const SizedBox(
                   height: 40,
                 ),
@@ -771,8 +607,7 @@ class _PNURegisterState extends State<PNURegister> {
                   child: SizedBox(
                     height: 50,
                     width: 600,
-                    child:
-                    Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ButtonWidget(
@@ -786,92 +621,132 @@ class _PNURegisterState extends State<PNURegister> {
                             buttonText: 'Save',
                             type: 0,
                             onPressed: () {
-                              {
-                                if (nameController.text.isEmpty||
-                                    ageController.text.isEmpty ||
-                                    clinicTeamController.text.isEmpty||
-                                    villageNameController.text.isEmpty ||
-                                    volunteerNameController.text.isEmpty ||
-                                    treatmentPeriodController.text.isEmpty ||
-                                    reportingPeriod.isEmpty) {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                      content: Center(
-                                        child: Text('Sorry!! Please input empty fields'),
-                                      )));
-                                } else {
-                                  //Check Validation for Age
-                                  var age = int.parse(ageController.text);
-                                  if (age > 0 && age < 101) {
-                                    String trementValue = "$amclin||${amoSislinController.text}||${saltPackageContoller.text}||${zincSulphateWholeController.text}||${paracetamolWholeController.text}";
-                                    PNUVo dataVo = PNUVo(
-                                        tableName: AppConstants.pnuTable,
-                                        orgName: PreferenceManager.getString(ORG),
-                                        stateName: PreferenceManager.getString(STATE),
-                                        townshipName: PreferenceManager.getString(REGION),
-                                        townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
-                                        clinic: clinic,
-                                        villageName: villageNameController.text,
-                                        volunteerName: volunteerNameController.text,
-                                        reportingPeroid: reportingPeriod,
-                                        date: date,
-                                        name: nameController.text,
-                                        age: ageController.text,
-                                        sex: gender,
-                                        disabled: disabled,
-                                        relocation: relocation,
-                                        kofPatient: patientType,
-                                        symptomsList: selectSymptomsList,
-                                        diseaseList: selectTypeOfDiseaseList,
-                                        treatment: trementValue,
-                                        treatmentPeriod: treatmentPeriodController.text,
-                                        refer: isPrevent,
-                                        referPlace: handOverValue,
-                                        referGo: referGo,
-                                        remark: remarkController.text,
-                                        createDate: todayDateString,
-                                        updateDate: todayDateString);
-                                    //Add To DB
+                              if (nameController.text.isEmpty||
+                                  ageController.text.isEmpty ||
+                                  referredFromController.text.isEmpty||
+                                  gravidaController.text.isEmpty ||
+                                  parityController.text.isEmpty ||
+                                  findingsController.text.isEmpty ||
+                                  treatmentController.text.isEmpty ||
+                                  attendedby.isEmpty ||
+                                  outcome.isEmpty ||
+                                  clinicTeamController.text.isEmpty ||
+                                  reportingPeriod.isEmpty ||
+                                  channel.isEmpty ||
+                                  tdSelectString.isEmpty ) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                    content: Center(
+                                      child: Text('Sorry!! Please input empty fields'),
+                                    )));
+                              } else {
+                                //Check Validation for Age
+                                var age = int.parse(ageController.text);
+                                var gestation = int.parse(referredFromController.text);
+                                var gravida = int.parse(gravidaController.text);
+                                var parity = int.parse(parityController.text);
+                                if (age > 0 && age < 101) {
 
-                                    try {
-                                      PreferenceManager.setString(CLINIC, clinicTeamController.text);
-                                      PreferenceManager.setString(CHANNEL, channel);
-                                      PreferenceManager.setString(REPORT_PERIOD, reportingPeriod);
-                                      //  DatabaseProvider provider = DatabaseProvider.db;
-                                      // provider.insertACNDataToDB(dataVo);
-                                      helper.insertPNUDataToDB(dataVo,false);
+                                  if (gestation > 0 && gestation < 43){
 
-                                      Navigator.of(context).pushReplacement(
-                                          MaterialPageRoute(
-                                              builder: (builder) =>
-                                                  HomeScreen(indexOfTab: 2, selectedSideIndex: 1,)));
-                                    } catch (e) {
+                                    if (gravida > 0 && gravida < 21){
+
+                                      if (parity > -1 && parity < 21){
+
+                                        //Add To DB
+                                        ANCVo dataVo = ANCVo(
+                                            tableName: AppConstants.ancTable,
+                                            orgName: PreferenceManager.getString(ORG),
+                                            stateName: PreferenceManager.getString(STATE),
+                                            townshipName: PreferenceManager.getString(REGION),
+                                            townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
+                                            clinic: clinicTeamController.text,
+                                            channel: channel,
+                                            reportingPeroid: reportingPeriod,
+                                            date: date,
+                                            name: nameController.text,
+                                            age: ageController.text,
+                                            disability: disability,
+                                            idp: idp,
+                                            gestational: referredFromController.text,
+                                            gravida: gravidaController.text,
+                                            parity: parityController.text,
+                                            noOfANC: nOfANCVisitController.text,
+                                            td: tdSelectString,
+                                            findings: findingsController.text,
+                                            treatment: treatmentController.text,
+                                            ancfour: tvContact,
+                                            attended: attendedby,
+                                            outcome: outcome,
+                                            remark: remarkController.text,
+                                            createDate: todayDateString,
+                                            updateDate: todayDateString);
+
+                                        try {
+                                          PreferenceManager.setString(CLINIC, clinicTeamController.text);
+                                          PreferenceManager.setString(CHANNEL, channel);
+                                          PreferenceManager.setString(REPORT_PERIOD, reportingPeriod);
+                                          //  DatabaseProvider provider = DatabaseProvider.db;
+                                          // provider.insertACNDataToDB(dataVo);
+                                          helper.insertACNDataToDB(dataVo,false);
+
+                                          Navigator.of(context).pushReplacement(
+                                              MaterialPageRoute(
+                                                  builder: (builder) =>
+                                                      HomeScreen(indexOfTab: 0, selectedSideIndex: 0,)));
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                              content: Center(
+                                                child: Text('Something wrong!!'),
+                                              )));
+                                        }
+
+                                        //End add to DB
+
+
+                                      }else{
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                            content: Center(
+                                              child: Text('Parity should be 0 to 20 !!!'),
+                                            )));
+
+                                      }
+
+
+                                    }else{
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(const SnackBar(
                                           content: Center(
-                                            child: Text('Something wrong!!'),
+                                            child: Text('Gravida should be 1 to 20 !!!'),
                                           )));
                                     }
 
-                                    //End add to DB
+
 
                                   }else{
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
                                         content: Center(
-                                          child: Text('Age should be between 1 to 100 years !!!'),
+                                          child: Text('Gestational Week should be 1 to 42 weeks !!!'),
                                         )));
-
                                   }
 
-                                }
-                              }
 
-                            }
-                        ),
+                                }else{
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                      content: Center(
+                                        child: Text('Age should be between 1 to 100 years !!!'),
+                                      )));
+
+                                }
+
+                              }
+                            })
                       ],
                     ),
-
                   ),
                 ),
               ],
@@ -895,7 +770,10 @@ class _PNURegisterState extends State<PNURegister> {
           ]),
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: controller == ageController || controller == treatmentPeriodController
+        child: controller == ageController ||
+            controller == gravidaController ||
+            controller == parityController ||
+            controller == nOfANCVisitController
             ? TextField(
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly,
@@ -921,32 +799,34 @@ class _PNURegisterState extends State<PNURegister> {
     );
   }
 
-  Container halfInputBox(
-      String title, TextEditingController controller, int limit) {
-    return Container(
-      height: 50,
-      width: 170,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(blurRadius: 5.0, spreadRadius: 5.0, color: Colors.black12)
-          ]),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 15),
-        child: TextField(
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(limit),
-          ],
-          controller: controller,
-          decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: title,
-              hintStyle: const TextStyle(color: Colors.grey)),
-        ),
 
+}
+
+Container halfInputBox(
+    String title, TextEditingController controller, int limit) {
+  return Container(
+    height: 50,
+    width: 170,
+    decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(blurRadius: 5.0, spreadRadius: 5.0, color: Colors.black12)
+        ]),
+    child: Padding(
+      padding: const EdgeInsets.only(left: 15),
+      child: TextField(
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(limit),
+        ],
+        controller: controller,
+        decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: title,
+            hintStyle: const TextStyle(color: Colors.grey)),
       ),
-    );
-  }
+
+    ),
+  );
 }

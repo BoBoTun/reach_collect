@@ -13,6 +13,7 @@ import '../../widgets/button_widget.dart';
 import '../../widgets/custom_dropdown_widget.dart';
 import '../../widgets/custom_radio.dart';
 import '../../widgets/date_picker.dart';
+import '../../widgets/month_picker.dart';
 import '../home_screen.dart';
 
 class ReferralRegister extends StatefulWidget {
@@ -72,7 +73,7 @@ class _ReferralRegisterState extends State<ReferralRegister> {
 
     // clinicTeamController.text = PreferenceManager.getString(CLINIC) ?? '';
     // channel = PreferenceManager.getString(CHANNEL) ?? '';
-    // reportingPeriod = PreferenceManager.getString(REPORT_PERIOD) ?? date;
+     reportingPeriod = PreferenceManager.getString(REPORT_PERIOD) ?? date;
 
     attendedby = AppConstants.attandedList[0];
 
@@ -146,7 +147,7 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Clinic',
+                          'Channel',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -163,14 +164,27 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'ကျေးရွာအမည်',
+                          'Reporting Period',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('ကျေးရွာအမည်', 1, villageNameController,10000),
+                        MonthPicker(dateString: (dateString) {
+                          reportingPeriod = dateString;
+                        },
+                          updateDateString: reportingPeriod,
+                        ),
+                        /*
+                        DatePicker(
+                          dateString: (dateString) {
+                            reportingPeriod = dateString;
+                          },
+                          updateDateString: reportingPeriod,
+                        ),
+                        */
+
                       ],
                     ),
                     Column(
@@ -211,6 +225,21 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'ကျေးရွာအမည်',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('ကျေးရွာအမည်', 1, villageNameController,10000),
+                      ],
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -236,9 +265,19 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('အသက်', 1, ageController,10000),
+                        inputBox('အသက်', 1, ageController,3),
                       ],
                     ),
+
+                  ],
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     SizedBox(
                       width: 250,
                       child: Column(
@@ -264,16 +303,6 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                         ],
                       ),
                     ),
-
-                  ],
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     SizedBox(
                       width: 250,
                       child: Column(
@@ -324,6 +353,17 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                         ],
                       ),
                     ),
+
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 40,
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -340,17 +380,6 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                         }, options: AppConstants.referralTypeList, currentValue: referralType.isEmpty ? AppConstants.referralTypeList[0] : referralType,),
                       ],
                     ),
-
-                  ],
-                ),
-
-                const SizedBox(
-                  height: 40,
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -379,6 +408,17 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                         inputBox('လွှဲပြောင်းပေးပို့သည့်နေရာ', 1, referralPlaceController,10000),
                       ],
                     ),
+
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 40,
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     SizedBox(
                       width: 250,
                       child: Column(
@@ -404,17 +444,6 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                         ],
                       ),
                     ),
-
-                  ],
-                ),
-
-                const SizedBox(
-                  height: 40,
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -442,9 +471,6 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                         ),
                         inputBox('Remark', 3, remarkController,10000),
                       ],
-                    ),
-                    const SizedBox(
-                      width: 250,
                     )
 
                   ],
@@ -457,11 +483,23 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
-                          /*
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
+                              /*
                           if (nameController.text.isEmpty ) {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(
@@ -470,52 +508,56 @@ class _ReferralRegisterState extends State<ReferralRegister> {
                                 )));
                           }
                           */
-                          //Add To DB
-                          ReferalVo dataVo = ReferalVo(
-                              tableName : AppConstants.consultationTable,
-                              orgName: PreferenceManager.getString(ORG),
-                              stateName: PreferenceManager.getString(STATE),
-                              townshipName: PreferenceManager.getString(REGION),
-                              townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
-                              clinic: clinic,
-                              villageName: villageNameController.text,
-                              date: date,
-                              name: nameController.text,
-                              age: ageController.text,
-                              gender: gender,
-                              disability: disabled,
-                              relocation: relocation,
-                              referralType: referralType,
-                              referralCase: referalResonController.text,
-                              referralPlace: referralPlaceController.text,
-                              referralCost: referalCost,
-                              referralStaffName: referralStafController.text,
-                              remark: remarkController.text,
-                              createDate: todayDateString,
-                              updateDate: todayDateString
-                          );
+                              //Add To DB
+                              ReferalVo dataVo = ReferalVo(
+                                  tableName : AppConstants.consultationTable,
+                                  orgName: PreferenceManager.getString(ORG),
+                                  stateName: PreferenceManager.getString(STATE),
+                                  townshipName: PreferenceManager.getString(REGION),
+                                  townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
+                                  clinic: clinic,
+                                  reportingPeroid: reportingPeriod,
+                                  villageName: villageNameController.text,
+                                  date: date,
+                                  name: nameController.text,
+                                  age: ageController.text,
+                                  gender: gender,
+                                  disability: disabled,
+                                  relocation: relocation,
+                                  referralType: referralType,
+                                  referralCase: referalResonController.text,
+                                  referralPlace: referralPlaceController.text,
+                                  referralCost: referalCost,
+                                  referralStaffName: referralStafController.text,
+                                  remark: remarkController.text,
+                                  createDate: todayDateString,
+                                  updateDate: todayDateString
+                              );
 
-                          try {
-                            PreferenceManager.setString(CHANNEL, channel);
-                            PreferenceManager.setString(REPORT_PERIOD, reportingPeriod);
-                            //  DatabaseProvider provider = DatabaseProvider.db;
-                            // provider.insertACNDataToDB(dataVo);
-                            helper.insertReferralDataToDB(dataVo,false);
+                              try {
+                                PreferenceManager.setString(CHANNEL, channel);
+                                PreferenceManager.setString(REPORT_PERIOD, reportingPeriod);
+                                //  DatabaseProvider provider = DatabaseProvider.db;
+                                // provider.insertACNDataToDB(dataVo);
+                                helper.insertReferralDataToDB(dataVo,false);
 
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (builder) =>
-                                        HomeScreen(indexOfTab: 3, selectedSideIndex: 2,)));
-                          } catch (e) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                                content: Center(
-                                  child: Text('Something wrong!!'),
-                                )));
-                          }
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (builder) =>
+                                            HomeScreen(indexOfTab: 3, selectedSideIndex: 2,)));
+                              } catch (e) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                    content: Center(
+                                      child: Text('Something wrong!!'),
+                                    )));
+                              }
 
-                          //End add to DB
-                        }),
+                              //End add to DB
+                            }),
+                      ],
+                    ),
+
                   ),
                 ),
               ],
@@ -563,7 +605,18 @@ class _ReferralRegisterState extends State<ReferralRegister> {
           ]),
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: TextField(
+        child:  controller == ageController? TextField(
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(limit),
+          ],
+          controller: controller,
+          maxLines: maxlines,
+          decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: title,
+              hintStyle: const TextStyle(color: Colors.grey)),
+        ) :TextField(
           controller: controller,
           maxLines: maxlines,
           decoration: InputDecoration(

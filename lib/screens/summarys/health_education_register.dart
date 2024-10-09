@@ -64,14 +64,18 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
 
     date = "${todayDate.toLocal()}".split(' ')[0];
     //tdSelectedDate = "${todayDate.toLocal()}".split(' ')[0];
-    todayDateString = DateFormat('yyyy-MM-dd - kk-mm-ss').format(todayDate);
+    todayDateString = PreferenceManager.getString(HEDate) ?? DateFormat('yyyy-MM-dd - kk-mm-ss').format(todayDate);
 
     // clinicTeamController.text = PreferenceManager.getString(CLINIC) ?? '';
     // channel = PreferenceManager.getString(CHANNEL) ?? '';
-    // reportingPeriod = PreferenceManager.getString(REPORT_PERIOD) ?? date;
+     reportingPeriod = PreferenceManager.getString(REPORT_PERIOD) ?? date;
 
     attendedby = AppConstants.attandedList[0];
 
+    villageNameController.text = PreferenceManager.getString(HEVIllageName) ?? '';
+    topicController.text = PreferenceManager.getString(HEReson) ?? '';
+    presenterNameController.text = PreferenceManager.getString(HEPresenterName) ?? '';
+    positionController.text = PreferenceManager.getString(HEPosition) ?? '';
 
 
   }
@@ -142,6 +146,33 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
+                          'Reporting Period',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        MonthPicker(dateString: (dateString) {
+                          reportingPeriod = dateString;
+                        },
+                          updateDateString: reportingPeriod,
+                        ),
+                        /*
+                        DatePicker(
+                          dateString: (dateString) {
+                            reportingPeriod = dateString;
+                          },
+                          updateDateString: reportingPeriod,
+                        ),
+                        */
+
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
                       'ကျေးရွာ/ Camp အမည်',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
@@ -167,25 +198,6 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                         inputBox('ပညာပေးသည့်အကြောင်းအရာ', 1, topicController,10000),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'ရက်စွဲ',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        DatePicker(
-                          dateString: (dateString) {
-                            date = dateString;
-                          },
-                          updateDateString: date,
-                        ),
-                      ],
-                    ),
                     //channel
                   ],
                 ),
@@ -206,6 +218,26 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'ရက်စွဲ',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            date = dateString;
+                          },
+                          updateDateString: date,
+                        ),
+                      ],
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -234,6 +266,17 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                         inputBox('ရာထူး', 1, positionController,10000),
                       ],
                     ),
+
+                  ],
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -248,16 +291,6 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                         inputBox('တက်ရောက်သူအမည်', 1, attandedNameController,10000),
                       ],
                     ),
-
-                  ],
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -269,7 +302,7 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('အသက်', 1, ageController,10000),
+                        inputBox('အသက်', 1, ageController,3),
                       ],
                     ),
                     //Male/Female
@@ -299,6 +332,17 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                       ),
                     ),
 
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 40,
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+
                     SizedBox(
                       width: 250,
                       child: Column(
@@ -324,17 +368,6 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                         ],
                       ),
                     ),
-
-                  ],
-                ),
-
-                const SizedBox(
-                  height: 40,
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     SizedBox(
                       width: 250,
                       child: Column(
@@ -385,6 +418,18 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                         ],
                       ),
                     ),
+
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 40,
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -399,7 +444,6 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                         inputBox('Remark', 3, remarkController,10000),
                       ],
                     ),
-
                   ],
                 ),
 
@@ -410,11 +454,23 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
-                          /*
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
+                              /*
                           if (nameController.text.isEmpty ) {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(
@@ -423,50 +479,61 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
                                 )));
                           }
                           */
-                          //Add To DB
-                          HEVo dataVo = HEVo(
-                              tableName : AppConstants.consultationTable,
-                              orgName: PreferenceManager.getString(ORG),
-                              stateName: PreferenceManager.getString(STATE),
-                              townshipName: PreferenceManager.getString(REGION),
-                              townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
-                              villageName: villageNameController.text,
-                              topic: topicController.text,
-                              date: date,
-                              presenterName: presenterNameController.text,
-                              position: positionController.text,
-                              attendedName: attandedNameController.text,
-                              age: ageController.text,
-                              gender: gender,
-                              disability: disabled,
-                              relocation: relocation,
-                              isNew: newOrNot,
-                              remark: remarkController.text,
-                              createDate: todayDateString,
-                              updateDate: todayDateString
-                          );
+                              //Add To DB
+                              HEVo dataVo = HEVo(
+                                  tableName : AppConstants.consultationTable,
+                                  orgName: PreferenceManager.getString(ORG),
+                                  stateName: PreferenceManager.getString(STATE),
+                                  townshipName: PreferenceManager.getString(REGION),
+                                  townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
+                                  reportingPeroid: reportingPeriod,
+                                  villageName: villageNameController.text,
+                                  topic: topicController.text,
+                                  date: date,
+                                  presenterName: presenterNameController.text,
+                                  position: positionController.text,
+                                  attendedName: attandedNameController.text,
+                                  age: ageController.text,
+                                  gender: gender,
+                                  disability: disabled,
+                                  relocation: relocation,
+                                  isNew: newOrNot,
+                                  remark: remarkController.text,
+                                  createDate: todayDateString,
+                                  updateDate: todayDateString
+                              );
 
-                          try {
-                            PreferenceManager.setString(CHANNEL, channel);
-                            PreferenceManager.setString(REPORT_PERIOD, reportingPeriod);
-                            //  DatabaseProvider provider = DatabaseProvider.db;
-                            // provider.insertACNDataToDB(dataVo);
-                            helper.insertHEDataToDB(dataVo,false);
+                              try {
+                                PreferenceManager.setString(CHANNEL, channel);
+                                PreferenceManager.setString(REPORT_PERIOD, reportingPeriod);
 
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (builder) =>
-                                        HomeScreen(indexOfTab: 2, selectedSideIndex: 2,)));
-                          } catch (e) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                                content: Center(
-                                  child: Text('Something wrong!!'),
-                                )));
-                          }
+                                PreferenceManager.setString(HEVIllageName, villageNameController.text);
+                                PreferenceManager.setString(HEReson, topicController.text);
+                                PreferenceManager.setString(HEDate, date);
+                                PreferenceManager.setString(HEPresenterName, presenterNameController.text);
+                                PreferenceManager.setString(HEPosition, positionController.text);
 
-                          //End add to DB
-                        }),
+                                //  DatabaseProvider provider = DatabaseProvider.db;
+                                // provider.insertACNDataToDB(dataVo);
+                                helper.insertHEDataToDB(dataVo,false);
+
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (builder) =>
+                                            HomeScreen(indexOfTab: 2, selectedSideIndex: 2,)));
+                              } catch (e) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                    content: Center(
+                                      child: Text('Something wrong!!'),
+                                    )));
+                              }
+
+                              //End add to DB
+                            }),
+                      ],
+                    ),
+
                   ),
                 ),
               ],
@@ -514,7 +581,19 @@ class _HealthEducationRegisterState extends State<HealthEducationRegister> {
           ]),
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: TextField(
+        child: controller == ageController? TextField(
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(limit),
+          ],
+          controller: controller,
+          maxLines: maxlines,
+          decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: title,
+              hintStyle: const TextStyle(color: Colors.grey)),
+        )
+            : TextField(
           controller: controller,
           maxLines: maxlines,
           decoration: InputDecoration(

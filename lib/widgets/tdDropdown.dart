@@ -26,6 +26,7 @@ class _TDDropDownState extends State<TDDropDownView> {
 
   // Options for the dropdown
   final List<String> _options = [
+    'NA',
     '1st',
     '2nd',
   ];

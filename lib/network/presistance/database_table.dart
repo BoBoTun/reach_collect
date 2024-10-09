@@ -17,6 +17,7 @@
   static const String COLUMN_NAME_Gestational = 'Gestational';
   static const String COLUMN_NAME_Gravida = 'Gravida';
   static const String COLUMN_NAME_Parity = 'Parity';
+  static const String COLUMN_NAME_NoOfANC = 'NoOfANC';
   static const String COLUMN_NAME_Td = 'Td';
   static const String COLUMN_NAME_Findings = 'Findings';
   static const String COLUMN_NAME_Treatment = 'Treatment';
@@ -110,6 +111,10 @@ class SRHTable{
    static const String COLUMN_NAME_Address = 'Address';
    static const String COLUMN_NAME_DOB = 'Dob';
    static const String COLUMN_NAME_BCG= 'BCG';
+   static const String COLUMN_NAME_OPV= 'OPV';
+   static const String COLUMN_NAME_PENTA= 'PENTA';
+   static const String COLUMN_NAME_MMR= 'MMR';
+   static const String COLUMN_NAME_JE= 'JE';
    static const String COLUMN_NAME_Vaccined= 'Vaccined';
    static const String COLUMN_NAME_Refer= 'Refer';
    static const String COLUMN_NAME_ReferPlace = 'ReferPlace';
@@ -128,6 +133,7 @@ class SRHTable{
    static const String COLUMM_TOWNSHIP_NAME = 'TownshipName';
    static const String COLUMM_TOWNSHIP_LOCAL_NAME = 'TownshipLocalName';
    static const String COLUMM_CLINIC = 'Clinic';
+   static const String COLUMM_REPORTING_PERIOD = 'reportingperoid';
    static const String COLUMM_VILLAGE_NAME = 'VillageName';
    static const String COLUMM_VOLUNTEER_NAME = 'VolunteerName';
    static const String COLUMN_NAME_Date = 'Date';
@@ -240,6 +246,7 @@ class SRHTable{
    static const String COLUMM_STATE_NAME = 'statename';
    static const String COLUMM_TOWNSHIP_NAME = 'townshipname';
    static const String COLUMM_TOWNSHIP_LOCAL_NAME = 'townshiplocalname';
+   static const String COLUMM_REPORTING_PERIOD = 'reportingperoid';
    static const String COLUMM_Village_Name = 'villageName';
    static const String COLUMM_NAME_Topic = 'topic';
    static const String COLUMN_NAME_Date = 'Date';
@@ -266,6 +273,7 @@ class SRHTable{
    static const String COLUMM_TOWNSHIP_NAME = 'townshipname';
    static const String COLUMM_TOWNSHIP_LOCAL_NAME = 'townshiplocalname';
    static const String COLUMM_CLINIC = 'clinic';
+   static const String COLUMM_REPORTING_PERIOD = 'reportingperoid';
    static const String COLUMM_Village_Name = 'villageName';
    static const String COLUMN_NAME_Date = 'Date';
    static const String COLUMN_NAME_Name = 'Name';
@@ -284,3 +292,58 @@ class SRHTable{
 
  }
 
+
+ //Extend Table
+
+ class FollowUpTable{
+   static const String TABLE_NAME = 'FollowUpTable';
+   static const String COLUMM_Id = 'id';
+   static const String COLUMM_ART_Id = 'artId';
+   static const String COLUMM_DATE = 'date';
+   static const String COLUMM_OUTCOME = 'outcome';
+   static const String COLUMM_TB_STATUS = 'tbStatus';
+   static const String COLUMM_ADHERENCE = 'adHerence';
+   static const String COLUMM_VIRAL_LOAD = 'viralLoad';
+   static const String COLUMM_NEXT_VISIT = 'nextVISIT';
+ }
+
+ class TBFollowUpTable{
+   static const String TABLE_NAME = 'TBFollowUpTable';
+   static const String COLUMM_Id = 'id';
+   static const String COLUMM_TB_Id = 'tbId';
+   static const String COLUMM_DATE = 'date';
+   static const String COLUMM_S = 's';
+   static const String COLUMM_X= 'x';
+   static const String COLUMM_T= 't';
+   static const String COLUMM_LABNO = 'labNo';
+   static const String COLUMM_REMARK = 'Remark';
+ }
+
+ //IHRP
+
+ class MalariaTable{
+   static const String TABLE_NAME = 'MalariaTable';
+   static const String COLUMM_Id = 'id';
+   static const String COLUMM_TABLE = 'tableName';
+   static const String COLUMM_ORG_NAME = 'orgname';
+   static const String COLUMM_STATE_NAME = 'statename';
+   static const String COLUMM_TOWNSHIP_NAME = 'townshipname';
+   static const String COLUMM_TOWNSHIP_LOCAL_NAME = 'townshiplocalname';
+   static const String COLUMM_CLINIC = 'clinic';
+   static const String COLUMM_REPORTING_PERIOD = 'reportingperoid';
+   static const String COLUMM_Village_Name = 'villageName';
+   static const String COLUMN_NAME_Date = 'Date';
+   static const String COLUMN_NAME_Name = 'Name';
+   static const String COLUMN_NAME_Age = 'age';
+   static const String COLUMN_NAME_Gender = 'gender';
+   static const String COLUMN_NAME_Disability = 'Disability';
+   static const String COLUMN_NAME_Relocation = 'Relocation';
+   static const String COLUMN_NAME_Referral_Type = 'referralType';
+   static const String COLUMN_NAME_Referral_Case = 'referralCase';
+   static const String COLUMN_NAME_Referral_Place = 'referralPlace';
+   static const String COLUMN_NAME_Referral_Cost = 'referralCost';
+   static const String COLUMN_NAME_Referral_Staff_Name = 'referralStaffName';
+   static const String COLUMN_NAME_Remark = 'Remark';
+   static const String COLUMN_CREATE_DATE = 'CreateDate';
+   static const String COLUMN_UPDATE_DATE = 'UpdateDate';
+ }

@@ -16,6 +16,10 @@ class EPIVo {
   String? address;
   String? dob;
   String? bcg;
+  String? opv;
+  String? penta;
+  String? mmr;
+  String? je;
   String? vaccined;
   String? refer;
   String? referPlace;
@@ -40,6 +44,10 @@ class EPIVo {
     this.address,
     this.dob,
     this.bcg,
+    this.opv,
+    this.penta,
+    this.mmr,
+    this.je,
     this.vaccined,
     this.refer,
     this.referPlace,
@@ -66,6 +74,10 @@ class EPIVo {
       EPITable.COLUMN_NAME_Address: address,
       EPITable.COLUMN_NAME_DOB: dob,
       EPITable.COLUMN_NAME_BCG: bcg,
+      EPITable.COLUMN_NAME_OPV: opv,
+      EPITable.COLUMN_NAME_PENTA: penta,
+      EPITable.COLUMN_NAME_MMR: mmr,
+      EPITable.COLUMN_NAME_JE: je,
       EPITable.COLUMN_NAME_Vaccined: vaccined,
       EPITable.COLUMN_NAME_Refer: refer,
       EPITable.COLUMN_NAME_ReferPlace: referPlace,

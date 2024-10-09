@@ -12,6 +12,7 @@ import '../../../utils/share_preference.dart';
 import '../../../widgets/button_widget.dart';
 import '../../../widgets/custom_radio.dart';
 import '../../../widgets/date_picker.dart';
+import '../../../widgets/month_picker.dart';
 import '../../../widgets/textfield_widget.dart';
 import '../../home_screen.dart';
 
@@ -69,7 +70,7 @@ class _EditHEState extends State<EditHE> {
     todayDateString = DateFormat('yyyy-MM-dd - kk-mm-ss').format(todayDate);
 
     date = widget.reachCollectVo.date ?? '';
-        reportingPeriod = widget.reachCollectVo.date ?? '';
+        reportingPeriod = widget.reachCollectVo.reportingPeroid ?? '';
 
         gender = widget.reachCollectVo.gender ?? '';
     disabled = widget.reachCollectVo.disability ?? '';
@@ -83,7 +84,7 @@ class _EditHEState extends State<EditHE> {
 
         presenterNameController.text = widget.reachCollectVo.presenterName ?? '';
         positionController.text = widget.reachCollectVo.position ?? '';
-        attandedNameController.text = widget.reachCollectVo.presenterName ?? '';
+        attandedNameController.text = widget.reachCollectVo.attendedName ?? '';
 
         ageController.text = widget.reachCollectVo.age ?? '';
 
@@ -357,6 +358,33 @@ class _EditHEState extends State<EditHE> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
+                          'Reporting Period',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        MonthPicker(dateString: (dateString) {
+                          reportingPeriod = dateString;
+                        },
+                          updateDateString: reportingPeriod,
+                        ),
+                        /*
+                        DatePicker(
+                          dateString: (dateString) {
+                            reportingPeriod = dateString;
+                          },
+                          updateDateString: reportingPeriod,
+                        ),
+                        */
+
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
                           'ကျေးရွာ/ Camp အမည်',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
@@ -382,25 +410,6 @@ class _EditHEState extends State<EditHE> {
                         inputBox('ပညာပေးသည့်အကြောင်းအရာ', 1, topicController,10000),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'ရက်စွဲ',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        DatePicker(
-                          dateString: (dateString) {
-                            date = dateString;
-                          },
-                          updateDateString: date,
-                        ),
-                      ],
-                    ),
                     //channel
                   ],
                 ),
@@ -421,6 +430,26 @@ class _EditHEState extends State<EditHE> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'ရက်စွဲ',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            date = dateString;
+                          },
+                          updateDateString: date,
+                        ),
+                      ],
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -449,20 +478,6 @@ class _EditHEState extends State<EditHE> {
                         inputBox('ရာထူး', 1, positionController,10000),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'တက်ရောက်သူအမည်',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        inputBox('တက်ရောက်သူအမည်', 1, attandedNameController,10000),
-                      ],
-                    ),
 
                   ],
                 ),
@@ -477,6 +492,20 @@ class _EditHEState extends State<EditHE> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
+                          'တက်ရောက်သူအမည်',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('တက်ရောက်သူအမည်', 1, attandedNameController,10000),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
                           'အသက်',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
@@ -484,7 +513,7 @@ class _EditHEState extends State<EditHE> {
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('အသက်', 1, ageController,10000),
+                        inputBox('အသက်', 1, ageController,3),
                       ],
                     ),
                     //Male/Female
@@ -514,6 +543,17 @@ class _EditHEState extends State<EditHE> {
                       ),
                     ),
 
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 40,
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+
                     SizedBox(
                       width: 250,
                       child: Column(
@@ -539,17 +579,6 @@ class _EditHEState extends State<EditHE> {
                         ],
                       ),
                     ),
-
-                  ],
-                ),
-
-                const SizedBox(
-                  height: 40,
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     SizedBox(
                       width: 250,
                       child: Column(
@@ -600,6 +629,20 @@ class _EditHEState extends State<EditHE> {
                         ],
                       ),
                     ),
+
+                  ],
+                ),
+
+
+
+                const SizedBox(
+                  height: 40,
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -614,7 +657,6 @@ class _EditHEState extends State<EditHE> {
                         inputBox('Remark', 3, remarkController,10000),
                       ],
                     ),
-
                   ],
                 ),
 
@@ -625,11 +667,23 @@ class _EditHEState extends State<EditHE> {
                 Center(
                   child: SizedBox(
                     height: 50,
-                    width: 300,
-                    child: ButtonWidget(
-                        buttonText: 'Save',
-                        onPressed: () {
-                          /*
+                    width: 600,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonWidget(
+                            buttonText: 'Cancel',
+                            type: 1,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        SizedBox(width: 20,),
+                        ButtonWidget(
+                            buttonText: 'Save',
+                            type: 0,
+                            onPressed: () {
+                              /*
                           if (nameController.text.isEmpty ) {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(
@@ -638,48 +692,52 @@ class _EditHEState extends State<EditHE> {
                                 )));
                           }
                           */
-                          //Add To DB
-                          HEVo dataVo = HEVo(
-                            id: widget.reachCollectVo.id,
-                              tableName : AppConstants.consultationTable,
-                              orgName: PreferenceManager.getString(ORG),
-                              stateName: PreferenceManager.getString(STATE),
-                              townshipName: PreferenceManager.getString(REGION),
-                              townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
-                              villageName: villageNameController.text,
-                              topic: topicController.text,
-                              date: date,
-                              presenterName: presenterNameController.text,
-                              position: positionController.text,
-                              attendedName: attandedNameController.text,
-                              age: ageController.text,
-                              gender: gender,
-                              disability: disabled,
-                              relocation: relocation,
-                              isNew: newOrNot,
-                              remark: remarkController.text,
-                              createDate: widget.reachCollectVo.createDate,
-                              updateDate: todayDateString
-                          );
+                              //Add To DB
+                              HEVo dataVo = HEVo(
+                                  id: widget.reachCollectVo.id,
+                                  tableName : AppConstants.consultationTable,
+                                  orgName: PreferenceManager.getString(ORG),
+                                  stateName: PreferenceManager.getString(STATE),
+                                  townshipName: PreferenceManager.getString(REGION),
+                                  townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
+                                  reportingPeroid: reportingPeriod,
+                                  villageName: villageNameController.text,
+                                  topic: topicController.text,
+                                  date: date,
+                                  presenterName: presenterNameController.text,
+                                  position: positionController.text,
+                                  attendedName: attandedNameController.text,
+                                  age: ageController.text,
+                                  gender: gender,
+                                  disability: disabled,
+                                  relocation: relocation,
+                                  isNew: newOrNot,
+                                  remark: remarkController.text,
+                                  createDate: widget.reachCollectVo.createDate,
+                                  updateDate: todayDateString
+                              );
 
-                          try {
+                              try {
 
-                            helper.updateHEInto(dataVo);
+                                helper.updateHEInto(dataVo);
 
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (builder) =>
-                                        HomeScreen(indexOfTab: 2, selectedSideIndex: 2,)));
-                          } catch (e) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                                content: Center(
-                                  child: Text('Something wrong!!'),
-                                )));
-                          }
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (builder) =>
+                                            HomeScreen(indexOfTab: 2, selectedSideIndex: 2,)));
+                              } catch (e) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                    content: Center(
+                                      child: Text('Something wrong!!'),
+                                    )));
+                              }
 
-                          //End add to DB
-                        }),
+                              //End add to DB
+                            }),
+                      ],
+                    ),
+
                   ),
                 ),
               ],
@@ -727,7 +785,18 @@ class _EditHEState extends State<EditHE> {
           ]),
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: TextField(
+        child:  controller == ageController? TextField(
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(limit),
+          ],
+          controller: controller,
+          maxLines: maxlines,
+          decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: title,
+              hintStyle: const TextStyle(color: Colors.grey)),
+        ):TextField(
           controller: controller,
           maxLines: maxlines,
           decoration: InputDecoration(

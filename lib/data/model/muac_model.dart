@@ -7,6 +7,7 @@ class MUACVo {
   String? townshipName;
   String? townshipLocalName;
   String? clinic;
+  String? reportingPeroid;
   String? villageName;
   String? volunteerName;
   String? date;
@@ -34,6 +35,7 @@ class MUACVo {
     this.townshipName,
     this.townshipLocalName,
     this.clinic,
+    this.reportingPeroid,
     this.villageName,
     this.volunteerName,
     this.date,
@@ -63,6 +65,7 @@ class MUACVo {
       MUACTable.COLUMM_TOWNSHIP_NAME: townshipName,
       MUACTable.COLUMM_TOWNSHIP_LOCAL_NAME: townshipLocalName,
       MUACTable.COLUMM_CLINIC: clinic,
+      MUACTable.COLUMM_REPORTING_PERIOD: reportingPeroid,
       MUACTable.COLUMM_VILLAGE_NAME: villageName,
       MUACTable.COLUMM_VOLUNTEER_NAME: volunteerName,
       MUACTable.COLUMN_NAME_Date: date,

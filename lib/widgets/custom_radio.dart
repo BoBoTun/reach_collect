@@ -3,7 +3,6 @@ import 'package:reach_collect/utils/app_styles.dart';
 
 class CustomRadioButton extends StatefulWidget {
   const CustomRadioButton({super.key, required this.radioValue, required this.activeValue, required this.radioList});
-
   final Function(String) radioValue;
   final String activeValue;
   final List<String> radioList;

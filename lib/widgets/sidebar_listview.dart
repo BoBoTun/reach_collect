@@ -32,7 +32,7 @@ class SidebarListItemView extends StatefulWidget {
 
 class _SidebarListItemViewState extends State<SidebarListItemView> {
   int _selectedIndex = 0;
-  List<String> items = ['RMNCH', 'Under5', 'Summary', 'Malaria'];
+  List<String> items = ['Maternal and Reproductive Health', 'Child Health','Infectious Disease', 'Aggregated Reporting'];
   final SQLiteHelper helper = SQLiteHelper();
   List<List<dynamic>> _data = [];
 

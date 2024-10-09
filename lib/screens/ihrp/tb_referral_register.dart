@@ -3,41 +3,52 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-import '../../../data/model/muac_model.dart';
-import '../../../network/presistance/SQLiteHelper.dart';
-import '../../../utils/app_constant.dart';
-import '../../../utils/app_styles.dart';
-import '../../../utils/preference_keys.dart';
-import '../../../utils/share_preference.dart';
-import '../../../widgets/button_widget.dart';
-import '../../../widgets/custom_dropdown_widget.dart';
-import '../../../widgets/custom_radio.dart';
-import '../../../widgets/date_picker.dart';
-import '../../../widgets/month_picker.dart';
-import '../../../widgets/textfield_widget.dart';
-import '../../home_screen.dart';
+import '../../data/model/anc_model.dart';
+import '../../data/model/muac_model.dart';
+import '../../network/presistance/SQLiteHelper.dart';
+import '../../utils/app_constant.dart';
+import '../../utils/app_styles.dart';
+import '../../utils/preference_keys.dart';
+import '../../utils/share_preference.dart';
+import '../../widgets/button_widget.dart';
+import '../../widgets/custom_dropdown_widget.dart';
+import '../../widgets/custom_radio.dart';
+import '../../widgets/date_picker.dart';
+import '../../widgets/month_picker.dart';
+import '../../widgets/radio_button.dart';
+import '../../widgets/tdDropdown.dart';
+import '../home_screen.dart';
+class TBReferralRegister extends StatefulWidget {
+  const TBReferralRegister({super.key});
 
-class EditMUAC extends StatefulWidget {
-  const EditMUAC({super.key, required this.reachCollectVo});
-  final MUACVo reachCollectVo;
   @override
-  State<EditMUAC> createState() => _EditMUACState();
+  State<TBReferralRegister> createState() => _TBReferralRegisterState();
 }
 
-class _EditMUACState extends State<EditMUAC> {
-
+class _TBReferralRegisterState extends State<TBReferralRegister> {
+  //data var
   String date = '';
+  String tbdate = '';
+  String disability = 'Yes';
   String gender = 'ကျား';
   String disabled = 'Yes';
   String relocation = 'Yes';
   String bcgValue = '';
+  String isPrevent = 'Yes';
+  String tbHas = 'Yes';
   String handOverValue = '';
+  String tbCheckValue = '';
   String clinic = 'ဆေးခန်း';
+  String typePatient = 'အသစ်';
+  String tbPlan = '1';
+  String healthEd = 'Yes';
 
+  String reportingPeriod = '';
+  String channel = '';
   String todayDateString = '';
   String swelling = '';
-  String reportingPeriod = '';
 
+  TextEditingController clinicTeamController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController remarkController = TextEditingController();
@@ -45,60 +56,37 @@ class _EditMUACState extends State<EditMUAC> {
   TextEditingController volunteerNameController = TextEditingController();
 
   TextEditingController ageController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
   TextEditingController armSizeController = TextEditingController();
   TextEditingController bodyWieghtController = TextEditingController();
+  TextEditingController tbNumberController = TextEditingController();
 
   String isPrefer = 'Yes';
   String isPreferGo = 'Yes';
+  String familyCheck = 'Yes';
 
   final SQLiteHelper helper = SQLiteHelper();
-
-  final TextEditingController orgController = TextEditingController();
-  final TextEditingController townshipLocalController = TextEditingController();
-
-  String? _selectedKey;
-  String? _selectedItem;
 
   @override
   void initState() {
     super.initState();
 
-    date = widget.reachCollectVo.date ?? '';
-    gender = widget.reachCollectVo.sex ?? 'ကျား';
-    disabled = widget.reachCollectVo.disabled ?? 'Yes';
-    relocation = widget.reachCollectVo.relocation ?? 'Yes';
-    handOverValue = widget.reachCollectVo.referPlace ?? '';
-    clinic = widget.reachCollectVo.clinic ?? 'ဆေးခန်း';
-    reportingPeriod = widget.reachCollectVo.reportingPeroid ?? date;
-    villageNameController.text = widget.reachCollectVo.villageName ?? '';
-    date = widget.reachCollectVo.date ?? '';
-    nameController.text = widget.reachCollectVo.name ?? '';
-    swelling = widget.reachCollectVo.swelling ?? '';
-
-    remarkController.text = widget.reachCollectVo.remark ?? '';
-    volunteerNameController.text = widget.reachCollectVo.volunteerName ?? '';
-
-    ageController.text = widget.reachCollectVo.age ?? '';
-    phoneController.text = widget.reachCollectVo.phone ?? '';
-    armSizeController.text = widget.reachCollectVo.armSize ?? '';
-    bodyWieghtController.text = widget.reachCollectVo.weight ?? '';
-
-    isPrefer = widget.reachCollectVo.refer ?? 'Yes';
-    isPreferGo = widget.reachCollectVo.referGo ?? 'Yes';
-
-
-   orgController.text = widget.reachCollectVo.orgName ?? '';
-   townshipLocalController.text = widget.reachCollectVo.townshipLocalName ?? '';
-
-    _selectedKey = widget.reachCollectVo.stateName ?? '';
-    _selectedItem = widget.reachCollectVo.townshipName ?? '';
-
     DateTime todayDate = DateTime.now();
+
+    date = "${todayDate.toLocal()}".split(' ')[0];
+    tbdate = "${todayDate.toLocal()}".split(' ')[0];
     todayDateString = DateFormat('yyyy-MM-dd - kk-mm-ss').format(todayDate);
+
+    clinicTeamController.text = PreferenceManager.getString(CLINIC) ?? '';
+    channel = PreferenceManager.getString(CHANNEL) ?? '';
+    reportingPeriod = PreferenceManager.getString(REPORT_PERIOD) ?? date;
+
+    swelling = AppConstants.swellingList[0];
+    handOverValue = AppConstants.tbReferralPlaceList[0];
+    tbCheckValue = AppConstants.tbCheckList[0];
 
 
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,7 +107,7 @@ class _EditMUACState extends State<EditMUAC> {
                 width: 30,
               ),
               const Text(
-                "MUAC",
+                "TB Referral Register",
                 style: AppTheme.navigationTitleStyle,
               ),
             ],
@@ -157,203 +145,6 @@ class _EditMUACState extends State<EditMUAC> {
               children: [
                 const SizedBox(
                   height: 20,
-                ),
-
-                //section two
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Organization *',
-                          style: TextStyle(
-                              color: AppTheme.secondaryColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 50,
-                          width: 200,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: const [
-                                BoxShadow(
-                                    blurRadius: 5.0,
-                                    spreadRadius: 5.0,
-                                    color: AppTheme.shadowColor)
-                              ]),
-                          child: TextFieldWidget(
-                              maxLength: 300,
-                              maxLines: 1,
-                              hintText: "Organization name",
-                              obscureText: false,
-                              controller: orgController),
-                        ),
-                      ],
-                    ),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const  Text(
-                              'State/Region *',
-                              style: TextStyle(
-                                  color: AppTheme.secondaryColor,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-
-                            Container(
-                              width: 200,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: const [
-                                    BoxShadow(blurRadius: 5.0, spreadRadius: 5.0, color: Colors.black12)
-                                  ]),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
-                                child: DropdownButton<String>(
-                                  isExpanded: true,
-                                  value: _selectedKey,
-                                  //icon: Icon(Icons.arrow_drop_down),
-                                  iconSize: 30,
-                                  elevation: 16,
-                                  hint: Text('Please Select'),
-                                  style: const TextStyle(fontSize: 16, color: Colors.black),
-                                  underline: Container(
-                                  ),
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      _selectedKey = newValue;
-                                      _selectedItem = null;
-                                    });
-                                  },
-                                  items: AppConstants.stateAndTownshipList.keys
-                                      .map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ),
-
-                          ],
-                        ),
-                      ],
-                    ),
-
-
-                    _selectedKey != null ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-
-                        const Text(
-                          'Township(MIMU) *',
-                          style: TextStyle(
-                              color: AppTheme.secondaryColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-
-                        Container(
-                          width: 200,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: const [
-                                BoxShadow(blurRadius: 5.0, spreadRadius: 5.0, color: Colors.black12)
-                              ]),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: DropdownButton<String>(
-                              isExpanded: true,
-                              value: _selectedItem,
-                              icon: const Icon(Icons.arrow_drop_down),
-                              iconSize: 30,
-                              elevation: 16,
-                              hint: Text('Please Select'),
-                              style: const TextStyle(fontSize: 16, color: Colors.black),
-                              underline: Container(
-                              ),
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _selectedItem = newValue;
-                                });
-                              },
-                              items: AppConstants.stateAndTownshipList[_selectedKey]!
-                                  .map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-
-
-                      ],
-                    ) : Container(),
-
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Township(Local)',
-                          style: TextStyle(
-                              color: AppTheme.secondaryColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        //DropdownListView(),
-                        Container(
-                          height: 50,
-                          width: 200,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: const [
-                                BoxShadow(
-                                    blurRadius: 5.0,
-                                    spreadRadius: 5.0,
-                                    color: AppTheme.shadowColor)
-                              ]),
-                          child: TextFieldWidget(
-                              maxLength: 300,
-                              maxLines: 1,
-                              hintText: "Township Local",
-                              obscureText: false,
-                              controller: townshipLocalController),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Divider(
-                  thickness: 1,
-                  color: Colors.black26,
                 ),
 
                 //pre session
@@ -418,8 +209,6 @@ class _EditMUACState extends State<EditMUAC> {
                         inputBox('ကျေးရွာအမည်', 1, villageNameController,10000),
                       ],
                     ),
-
-
                     //channel
                   ],
                 ),
@@ -610,31 +399,41 @@ class _EditMUACState extends State<EditMUAC> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'ဖုန်းနံပါတ်',
+                          'လိပ်စာ',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('ဖုန်းနံပါတ်', 1, phoneController,12),
+                        inputBox('လိပ်စာ', 1, addressController,12),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'လက်မောင်းလုံးပတ်',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        inputBox('လက်မောင်းလုံးပတ်', 1, armSizeController,20),
-                      ],
+                    SizedBox(
+                      width: 250,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'အတူနေမိသားစုဝင်များအား ကျန်းမာရေးစစ်ဆေးခြင်းမှတွေ့ရှိခြင်း',
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          SizedBox(
+                              height: 50,
+                              width: 200,
+                              child: CustomRadioButton(
+                                radioValue: (String value) {
+                                  relocation = value;
+                                },
+                                activeValue: relocation, radioList: ['Yes','No'],
+                              )),
+                        ],
+                      ),
                     ),
-
 
                   ],
                 ),
@@ -650,21 +449,7 @@ class _EditMUACState extends State<EditMUAC> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'ကိုယ် အလေးချိန် (ကီလိုဂရမ်)',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        inputBox('ကိုယ် အလေးချိန် (ကီလိုဂရမ်)',1, bodyWieghtController,12),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'ဖောရောင်ခြင်း',
+                          'လွှဲပြောင်းသည့်နေရာ',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
@@ -672,7 +457,7 @@ class _EditMUACState extends State<EditMUAC> {
                           height: 10,
                         ),
                         DropdownListView(containerWidth: 250,
-                          value: (String value, int index) { swelling = value; }, options: AppConstants.swellingList, currentValue: swelling,),
+                          value: (String value, int index) { handOverValue = value; }, options: AppConstants.tbReferralPlaceList, currentValue: handOverValue,),
                       ],
                     ),
                     SizedBox(
@@ -681,62 +466,7 @@ class _EditMUACState extends State<EditMUAC> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'ညွှန်းပို့မှု',
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                              height: 50,
-                              width: 200,
-                              child: CustomRadioButton(
-                                radioValue: (String value) {
-                                  isPrefer = value;
-                                },
-                                activeValue: isPrefer, radioList: ['Yes','No'],
-                              )),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                //Row 5
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-
-                    //dorp down
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'ညွှန်းပို့သည့်နေရာ',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        DropdownListView(containerWidth: 250,
-                          value: (String value, int index) {
-                            print("Selected Refer Value ::: $value");
-                            handOverValue = value;
-                          }, options: AppConstants.handoverList, currentValue: handOverValue
-                          ,),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 250,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'ညွှန်းပို့ရာသို့ သွား/မသွား',
+                            'စစ်ဆေးမှုခံယူခြင်း',
                             style: TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.bold),
                           ),
@@ -759,15 +489,215 @@ class _EditMUACState extends State<EditMUAC> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'မှတ်ချက်',
+                          'တီဘီရောဂါ စစ်ဆေးခြင်း',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        inputBox('မှတ်ချက်', 3, remarkController,10000),
+                        DropdownListView(containerWidth: 250,
+                          value: (String value, int index) { tbCheckValue = value; }, options: AppConstants.tbCheckList, currentValue: tbCheckValue,),
                       ],
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                //Row 5
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 250,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'တီဘီရောဂါ',
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          SizedBox(
+                              height: 50,
+                              width: 200,
+                              child: CustomRadioButton(
+                                radioValue: (String value) {
+                                  tbHas = value;
+                                },
+                                activeValue: tbHas, radioList: ['Yes','No'],
+                              )),
+                        ],
+                      ),
+                    ),
+                    //dorp down
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'တီဘီ‌ဆေး စကုသည့်နေ့စွဲ',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DatePicker(
+                          dateString: (dateString) {
+                            tbdate = dateString;
+                          },
+                          updateDateString: tbdate,
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'မြို့နယ်တီဘီလူနာအမှတ်',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('မြို့နယ်တီဘီလူနာအမှတ်', 1, tbNumberController,5),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                //Row 5
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 250,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'လူနာအမျိုးအစား',
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          SizedBox(
+                              height: 50,
+                              width: 200,
+                              child: CustomRadioButton(
+                                radioValue: (String value) {
+                                  typePatient = value;
+                                },
+                                activeValue: typePatient, radioList: ['အသစ်','အဟောင်း'],
+                              )),
+                        ],
+                      ),
+                    ),
+                    //dorp down
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'တီဘီရောဂါကုထုံး',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DropdownListView(containerWidth: 250,
+                          value: (String value, int index) { tbPlan = value; }, options: ['1','2','3','4'], currentValue: tbPlan,),
+                      ],
+                    ),
+
+                    SizedBox(
+                      width: 250,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'ကျန်းမာရေးပညာ‌ပေးခြင်း',
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          SizedBox(
+                              height: 50,
+                              width: 200,
+                              child: CustomRadioButton(
+                                radioValue: (String value) {
+                                  healthEd = value;
+                                },
+                                activeValue: healthEd, radioList: ['Yes','No'],
+                              )),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                //Row 5
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    //dorp down
+
+                    SizedBox(
+                      width: 250,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'အတူနေမိသားစုဝင်များအား တီဘီရောဂါလက္ခဏာစစ်ဆေးခြင်း',
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          SizedBox(
+                              height: 50,
+                              width: 200,
+                              child: CustomRadioButton(
+                                radioValue: (String value) {
+                                  familyCheck = value;
+                                },
+                                activeValue: familyCheck, radioList: ['Yes','No'],
+                              )),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Remark',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        inputBox('Remark', 3, remarkController,10000),
+                      ],
+                    ),
+
+                    const SizedBox(
+                      width: 250,
                     )
                   ],
                 ),
@@ -799,7 +729,10 @@ class _EditMUACState extends State<EditMUAC> {
                                 if (nameController.text.isEmpty||
                                     ageController.text.isEmpty ||
                                     armSizeController.text.isEmpty ||
-                                    bodyWieghtController.text.isEmpty) {
+                                    bodyWieghtController.text.isEmpty ||
+                                    clinicTeamController.text.isEmpty ||
+                                    reportingPeriod.isEmpty ||
+                                    channel.isEmpty) {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(const SnackBar(
                                       content: Center(
@@ -811,17 +744,16 @@ class _EditMUACState extends State<EditMUAC> {
                                   var bodyWeight = int.parse(bodyWieghtController.text);
                                   if (age > 0 && age < 101) {
 
-                                    if (bodyWeight > 0 && bodyWeight < 31) {
+                                    if (bodyWeight > 0 && bodyWeight <31){
                                       //Add To DB
                                       MUACVo dataVo = MUACVo(
-                                          id: widget.reachCollectVo.id,
                                           tableName: AppConstants.muacTable,
-                                          orgName: orgController.text,
-                                          stateName: _selectedKey,
-                                          townshipName: _selectedItem,
-                                          townshipLocalName: townshipLocalController.text,
-                                          reportingPeroid: reportingPeriod,
+                                          orgName: PreferenceManager.getString(ORG),
+                                          stateName: PreferenceManager.getString(STATE),
+                                          townshipName: PreferenceManager.getString(REGION),
+                                          townshipLocalName: PreferenceManager.getString(REGION_LOCAL),
                                           clinic: clinic,
+                                          reportingPeroid: reportingPeriod,
                                           villageName: villageNameController.text,
                                           volunteerName: volunteerNameController.text,
                                           date: date,
@@ -830,7 +762,7 @@ class _EditMUACState extends State<EditMUAC> {
                                           sex: gender,
                                           disabled: disabled,
                                           relocation: relocation,
-                                          phone: phoneController.text,
+                                          phone: addressController.text,
                                           armSize: armSizeController.text,
                                           weight: bodyWieghtController.text,
                                           swelling: swelling,
@@ -838,14 +770,13 @@ class _EditMUACState extends State<EditMUAC> {
                                           referPlace: handOverValue,
                                           referGo: isPreferGo,
                                           remark: remarkController.text,
-                                          createDate: widget.reachCollectVo.createDate,
+                                          createDate: todayDateString,
                                           updateDate: todayDateString);
 
 
                                       try {
 
-                                        helper.updateMUACInto(dataVo);
-                                        //helper.insertMUACDataToDB(dataVo,false);
+                                        helper.insertMUACDataToDB(dataVo,false);
 
                                         Navigator.of(context).pushReplacement(
                                             MaterialPageRoute(
@@ -860,6 +791,7 @@ class _EditMUACState extends State<EditMUAC> {
                                       }
 
                                       //End add to DB
+
                                     }else{
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(const SnackBar(
@@ -867,8 +799,10 @@ class _EditMUACState extends State<EditMUAC> {
                                             child: Text('Body weight should be between 1 to 30 Kg !!!'),
                                           )));
                                     }
-                                  }
-                                  else{
+
+
+
+                                  }else{
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
                                         content: Center(
@@ -908,10 +842,7 @@ class _EditMUACState extends State<EditMUAC> {
           ]),
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: controller == ageController ||
-            controller == armSizeController ||
-            controller == bodyWieghtController ||
-            controller == phoneController ? TextField(
+        child: controller == ageController ? TextField(
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(limit),
@@ -922,7 +853,8 @@ class _EditMUACState extends State<EditMUAC> {
               border: InputBorder.none,
               hintText: title,
               hintStyle: const TextStyle(color: Colors.grey)),
-        ) :TextField(
+        )
+            : TextField(
           controller: controller,
           maxLines: maxlines,
           decoration: InputDecoration(
